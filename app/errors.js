@@ -10,4 +10,4 @@ exports.DEFAULT_ERROR = 'default_error';
 exports.defaultError = message => internalError(message, exports.DEFAULT_ERROR);
 
 exports.EXTERNAL_API_ERROR = 'external API error';
-exports.external_api_error = message => internalError(message, exports.EXTERNAL_API_ERROR);
+exports.externalApiError = message => internalError(message, exports.EXTERNAL_API_ERROR);
