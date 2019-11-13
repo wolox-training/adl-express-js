@@ -10,9 +10,9 @@ module.exports.albums = () => {
     });
 };
 
-module.exports.photos = () => {
+module.exports.photos = albumId => {
   albumsService
-    .photos()
+    .photos(albumId)
     .then(photosList => photosList)
     .catch(() => {
       throw errors.externalApiError('Error in external API');
