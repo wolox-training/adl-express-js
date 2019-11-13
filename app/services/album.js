@@ -15,9 +15,9 @@ exports.albums = () =>
       throw errors.externalApiError('Error in external API');
     });
 
-exports.photos = () =>
+exports.photos = albumId =>
   axios
-    .get(`${apiUrl}/photos`)
+    .get(`${apiUrl}/albums/${albumId}/photos`)
     .then(response => {
       logger.info(`Received photos: ${JSON.stringify(response)}`);
       return response;
