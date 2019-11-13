@@ -3,14 +3,14 @@ const albumsService = require('../services/album');
 const albums = () => {
   albumsService
     .albums()
-    .then(albums => albums)
+    .then(albumsr => albumsr)
     .catch();
 };
 
 const photos = () => {
   albumsService
     .photos()
-    .then(photos => console.log(photos))
+    .then(photosr => console.log(photosr))
     .catch();
 };
 
