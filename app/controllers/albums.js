@@ -1,18 +1,16 @@
 const albumsService = require('../services/album');
+const logger = require('../logger');
 
-const albums = () => {
+module.exports.albums = () => {
   albumsService
     .albums()
-    .then(albumsr => albumsr)
-    .catch();
+    .then(albumsList => logger.info(albumsList))
+    .catch('Error while displaying albums');
 };
 
-const photos = () => {
+module.exports.photos = () => {
   albumsService
     .photos()
-    .then(photosr => console.log(photosr))
-    .catch();
+    .then(photosList => logger.info(photosList))
+    .catch('Error while displaying photos');
 };
-
-console.log(photos());
-console.log(albums());
