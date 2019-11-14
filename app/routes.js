@@ -1,6 +1,7 @@
 // const controller = require('./controllers/controller');
 const { healthCheck } = require('./controllers/healthCheck');
 const albumsController = require('./controllers/albums');
+const usersController = require('./controllers/users');
 
 exports.init = app => {
   app.get('/health', healthCheck);
