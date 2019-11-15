@@ -10,4 +10,5 @@ exports.init = app => {
   // app.post('/endpoint/post/path', [], controller.methodPOST);
   app.get('/albums', albumsController.albums);
   app.get('/albums/:id/photos', albumsController.photos);
+  app.post('/users', usersController);
 };
