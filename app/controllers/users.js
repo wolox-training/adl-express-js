@@ -1,25 +1,11 @@
 const models = require('../models/index');
+const usersService = require('../services/users');
 
 module.exports.sign_up = (req, res, next) => {
-  const first_user = models.users
-    .findOne({ where: { email: req.body.email } })
-    .then(user => user.dataValues)
-    .then(dataValues => {
-      console.log('--------------------------------------------------------------');
-      console.log(dataValues);
-      if (!dataValues) {
-        models.users.create({
-          firstName: 'Roberto',
-          lastName: 'Gonzalez',
-          email: 'email@email.com',
-          password: 'pass'
-        });
-      }
-    });
-  console.log(first_user);
-  res.send({
-    menssage: 'Esta ruta es de prueba en mi api restful con mongo y node'
-  });
+  usersService
+    .sign_up(req.body)
+    .then()
+    .catch(next);
 };
 
 module.exports.sign_up = (req, res, next) => {};
