@@ -1,8 +1,8 @@
 const models = require('../models/index');
 
-module.exports.sign_up = (req, res) => {
+module.exports.sign_up = (req, res, next) => {
   const first_user = models.users
-    .findOne({ where: { email: 'email@email.com' } })
+    .findOne({ where: { email: req.body.email } })
     .then(user => user.dataValues)
     .then(dataValues => {
       console.log('--------------------------------------------------------------');
@@ -16,9 +16,10 @@ module.exports.sign_up = (req, res) => {
         });
       }
     });
-
   console.log(first_user);
   res.send({
     menssage: 'Esta ruta es de prueba en mi api restful con mongo y node'
   });
 };
+
+module.exports.sign_up = (req, res, next) => {};
