@@ -4,12 +4,12 @@ module.exports.albums = (_, res, next) => {
   albumsService
     .albums()
     .then(albumsList => albumsList)
-    .catch(error => next(error));
+    .catch(next);
 };
 
-module.exports.photos = (albumId, _, res, next) => {
+module.exports.photos = (req, res, next) => {
   albumsService
-    .photos(albumId)
+    .photos(req.params.id)
     .then(photosList => photosList)
-    .catch(error => next(error));
+    .catch(next);
 };
