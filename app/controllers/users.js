@@ -1,11 +1,12 @@
-const models = require('../models/index');
+// const models = require('../models/index');
 const usersService = require('../services/users');
 
-module.exports.sign_up = (req, res, next) => {
+module.exports.signUp = (req, res, next) => {
   usersService
-    .sign_up(req.body)
-    .then()
+    .signUp(req.body)
+    .then(
+      console.log('------------------------------------------')
+      // res.send('todo bien')
+    )
     .catch(next);
 };
-
-module.exports.sign_up = (req, res, next) => {};
