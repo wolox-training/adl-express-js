@@ -9,7 +9,7 @@ module.exports.albums = (_, res, next) => {
 
 module.exports.photos = (req, res, next) => {
   albumsService
-    .photos(req.params.albumId)
+    .photos(req.params.id)
     .then(photosList => photosList)
     .catch(next);
 };
