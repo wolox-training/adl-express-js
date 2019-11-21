@@ -4,9 +4,6 @@ const usersService = require('../services/users');
 module.exports.signUp = (req, res, next) => {
   usersService
     .signUp(req.body)
-    .then(
-      console.log('------------------------------------------')
-      // res.send('todo bien')
-    )
+    .then(() => res.send(req.body.firstName))
     .catch(next);
 };

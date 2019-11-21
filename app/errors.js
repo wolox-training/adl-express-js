@@ -9,5 +9,8 @@ exports.databaseError = message => internalError(message, exports.DATABASE_ERROR
 exports.DEFAULT_ERROR = 'default_error';
 exports.defaultError = message => internalError(message, exports.DEFAULT_ERROR);
 
-exports.EXTERNAL_API_ERROR = 'external API error';
+exports.EXTERNAL_API_ERROR = 'external_API_error';
 exports.externalApiError = message => internalError(message, exports.EXTERNAL_API_ERROR);
+
+exports.EMAIL_IN_USE_ERROR = 'email_already_in_use';
+exports.emailInUseError = message => internalError(message, exports.EMAIL_IN_USE_ERROR);
