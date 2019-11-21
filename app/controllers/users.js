@@ -1,9 +1,12 @@
-// const models = require('../models/index');
+const logger = require('../logger');
 const usersService = require('../services/users');
 
 module.exports.signUp = (req, res, next) => {
   usersService
     .signUp(req.body)
-    .then(() => res.send(req.body.firstName))
+    .then(() => {
+      logger.info(`Created user: ${JSON.stringify(req.body.firstName)}`);
+      res.send(req.body.firstName);
+    })
     .catch(next);
 };
