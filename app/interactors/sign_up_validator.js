@@ -1,3 +1,5 @@
+const errors = require('../errors');
+
 const PASSWORD_MIN_LENGTH = 8;
 
 const validateEmail = email => {
@@ -13,11 +15,11 @@ const validatePassword = password => {
 
 module.exports.validate = body => {
   if (!validateEmail(body.email)) {
-    throw new Error('invalid Email');
+    throw errors.emailError();
   }
 
   if (!validatePassword(body.password)) {
-    throw new Error('invalid Password');
+    throw errors.passwordError();
   }
 
   return true;

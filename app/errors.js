@@ -14,3 +14,9 @@ exports.externalApiError = message => internalError(message, exports.EXTERNAL_AP
 
 exports.EMAIL_IN_USE_ERROR = 'email_already_in_use';
 exports.emailInUseError = message => internalError(message, exports.EMAIL_IN_USE_ERROR);
+
+exports.EMAIL_ERROR = 'invalid_email';
+exports.emailError = message => internalError(message, exports.EMAIL_ERROR);
+
+exports.PASSWORD_ERROR = 'invalid_password';
+exports.passwordError = message => internalError(message, exports.PASSWORD_ERROR);
