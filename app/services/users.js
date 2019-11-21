@@ -1,5 +1,4 @@
 const models = require('../models/index');
-const logger = require('../logger');
 const errors = require('../errors');
 const signUpValidator = require('../interactors/sign_up_validator');
 const generatePassword = require('../interactors/generate_password');
@@ -19,7 +18,6 @@ module.exports.signUp = body =>
             password: hashedPassword
           })
           .catch(error => {
-            logger.error(`An error occurs in database: ${JSON.stringify(error)}`);
             throw errors.databaseError(`An error occurs in database: ${JSON.stringify(error)}`);
           })
       );
