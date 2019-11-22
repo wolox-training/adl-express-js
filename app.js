@@ -7,6 +7,7 @@ const routes = require('./app/routes');
 const errors = require('./app/middlewares/errors');
 const documentation = require('./documentation');
 const logger = require('./app/logger');
+const openApiDocumentation = require('./documentation/index');
 
 const DEFAULT_BODY_SIZE_LIMIT = 1024 * 1024 * 10;
 const DEFAULT_PARAMETER_LIMIT = 10000;
@@ -35,5 +36,6 @@ if (!config.isTesting) app.use(expressMiddleware({ loggerFn: logger.info }));
 routes.init(app);
 
 app.use(errors.handle);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocumentation));
 
 module.exports = app;
