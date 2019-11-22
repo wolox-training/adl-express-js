@@ -17,7 +17,7 @@ describe('usersController.signUp', () => {
       .post('/users')
       .send(userAttributes)
       .then(response => {
-        expect(response.text).toBe('Omar');
+        expect(response.text).toBe('Created user: Omar');
       })
       .then(() =>
         models.user
