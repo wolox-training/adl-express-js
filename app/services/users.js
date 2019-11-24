@@ -1,14 +1,15 @@
 const models = require('../models/index');
 const errors = require('../errors');
 const signUpValidator = require('../interactors/sign_up_validator');
-const generatePassword = require('../interactors/generate_password');
+const generatePassword = require('../helpers/users/generate_password');
 
-module.exports.signUp = body =>
-  models.user.findOne({ where: { email: body.email } }).then(user => {
+module.exports.signUp = body => {
+  signUpValidator.validate(body);
+
+  return models.user.findOne({ where: { email: body.email } }).then(user => {
     if (user) {
       throw errors.emailInUseError();
     } else {
-      signUpValidator.validate(body);
       return generatePassword.hashPassword(body.password).then(hashedPassword =>
         models.user
           .create({
@@ -23,3 +24,4 @@ module.exports.signUp = body =>
       );
     }
   });
+};
