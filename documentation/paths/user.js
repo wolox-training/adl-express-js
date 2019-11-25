@@ -27,7 +27,7 @@ module.exports = {
           }
         },
         400: {
-          description: 'Invalid parameters',
+          description: 'Existing user',
           content: {
             'application/json': {
               schema: {
