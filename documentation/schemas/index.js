@@ -1,5 +1,16 @@
 const user = require('./user');
 
 module.exports = {
-  ...user
+  ...user,
+  Error: {
+    type: 'object',
+    properties: {
+      message: {
+        type: 'string'
+      },
+      internal_code: {
+        type: 'string'
+      }
+    }
+  }
 };

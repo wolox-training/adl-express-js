@@ -11,10 +11,6 @@ module.exports = {
     type: 'string',
     example: 'thomas-schmidt@gmail.com'
   },
-  password: {
-    type: 'string',
-    example: 'password1039'
-  },
   User: {
     type: 'object',
     properties: {
@@ -26,11 +22,22 @@ module.exports = {
       },
       email: {
         $ref: '#/components/schemas/email'
-      },
-      password: {
-        $ref: '#/components/schemas/password'
       }
     }
+  },
+  UserWithPassword: {
+    type: 'object',
+    properties: {
+      password: {
+        type: 'string',
+        example: 'password1039'
+      }
+    },
+    allOf: [
+      {
+        $ref: '#/components/schemas/User'
+      }
+    ]
   },
   Users: {
     type: 'object',
