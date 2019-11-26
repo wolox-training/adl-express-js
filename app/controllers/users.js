@@ -3,7 +3,12 @@ const usersService = require('../services/users');
 const signUpValidator = require('../interactors/sign_up_validator');
 
 module.exports.signUp = (req, res, next) => {
-  signUpValidator.validate(req.body);
+  try {
+    signUpValidator.validate(req.body);
+  } catch (error) {
+    next(error);
+  }
+
   usersService
     .signUp(req.body)
     .then(() => {
