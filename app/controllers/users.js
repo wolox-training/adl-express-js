@@ -6,14 +6,14 @@ module.exports.signUp = (req, res, next) => {
   try {
     signUpValidator.validate(req.body);
   } catch (error) {
-    next(error);
+    throw error;
   }
 
   usersService
     .signUp(req.body)
     .then(() => {
       logger.info(`Created user: ${JSON.stringify(req.body.firstName)}`);
-      res.status(201).send(req.body.firstName);
+      res.status(201).send({ firstName: req.body.firstName });
     })
     .catch(next);
 };
