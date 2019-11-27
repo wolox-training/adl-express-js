@@ -1,13 +1,11 @@
 const logger = require('../logger');
 const usersService = require('../services/users');
 
-module.exports.signUp = (req, res, next) => {
-  console.log(req.body);
-  return usersService
+module.exports.signUp = (req, res, next) =>
+  usersService
     .signUp(req.body)
     .then(() => {
       logger.info(`Created user: ${JSON.stringify(req.body.firstName)}`);
       res.status(201).send({ firstName: req.body.firstName });
     })
     .catch(next);
-};

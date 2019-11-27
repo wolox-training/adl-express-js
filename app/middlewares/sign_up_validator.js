@@ -13,7 +13,7 @@ const validatePassword = password => {
   return number.test(password) && letter.test(password) && password.length > PASSWORD_MIN_LENGTH;
 };
 
-module.exports.validate = (req, res, next) => {
+module.exports.validate = (req, _, next) => {
   if (!validateEmail(req.body.email)) {
     throw errors.emailError();
   }
