@@ -21,7 +21,7 @@ module.exports = {
           content: {
             'application/json': {
               example: {
-                'Created user': 'Oscar'
+                firstName: 'Oscar'
               }
             }
           }
