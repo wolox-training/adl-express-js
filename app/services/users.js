@@ -7,17 +7,15 @@ module.exports.signUp = body =>
     if (user) {
       throw errors.emailInUseError();
     } else {
-      return generatePassword.hashPassword(body.password).then(hashedPassword =>
-        models.user
-          .create({
-            firstName: body.firstName,
-            lastName: body.lastName,
-            email: body.email,
-            password: hashedPassword
-          })
-          .catch(error => {
-            throw errors.databaseError(`An error occurs in database: ${JSON.stringify(error)}`);
-          })
-      );
+      return models.user
+        .create({
+          firstName: body.firstName,
+          lastName: body.lastName,
+          email: body.email,
+          password: generatePassword.hashPassword(body.password)
+        })
+        .catch(error => {
+          throw errors.databaseError(`An error occurs in database: ${JSON.stringify(error)}`);
+        });
     }
   });

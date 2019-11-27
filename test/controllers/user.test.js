@@ -16,7 +16,7 @@ describe('usersController.signUp', () => {
       .post('/users')
       .send(userAttributes)
       .then(response => {
-        expect(response.text).toBe('Omar');
+        expect(response.body.firstName).toBe('Omar');
       })
       .then(() =>
         models.user
@@ -40,7 +40,7 @@ describe('usersController.signUp', () => {
         request
           .post('/users')
           .send(userAttributes)
-          .then(response => expect(JSON.parse(response.text).internal_code).toBe('email_already_in_use'))
+          .then(response => expect(response.body.internal_code).toBe('email_already_in_use'))
       ));
 
   it('Try to create a user with invalid email and fails', () => {
@@ -50,7 +50,7 @@ describe('usersController.signUp', () => {
       .post('/users')
       .send(userAttributes)
       .then(response => {
-        expect(JSON.parse(response.text).internal_code).toBe('invalid_email');
+        expect(response.body.internal_code).toBe('invalid_email');
       });
   });
 
@@ -62,7 +62,7 @@ describe('usersController.signUp', () => {
       .post('/users')
       .send(userAttributes)
       .then(response => {
-        expect(JSON.parse(response.text).internal_code).toBe('invalid_password');
+        expect(response.body.internal_code).toBe('invalid_password');
       });
   });
 });
