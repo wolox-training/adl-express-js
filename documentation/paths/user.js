@@ -17,7 +17,7 @@ module.exports = {
       },
       responses: {
         200: {
-          description: 'User´s name',
+          description: 'User´s first name',
           content: {
             'application/json': {
               example: {
