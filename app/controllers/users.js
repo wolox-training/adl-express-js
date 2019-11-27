@@ -1,6 +1,6 @@
 const logger = require('../logger');
 const usersService = require('../services/users');
-// const login = require('../helpers/users/validate_password');
+const credentialsHelper = require('../helpers/users/validate_credentials');
 
 module.exports.signUp = (req, res, next) =>
   usersService
@@ -11,4 +11,11 @@ module.exports.signUp = (req, res, next) =>
     })
     .catch(next);
 
-module.exports.signIn = () => 0;
+module.exports.signIn = (req, _, next) => {
+  credentialsHelper
+    .signIn(req.body)
+    .then(user => {
+      console.log(user);
+    })
+    .catch(next);
+};
