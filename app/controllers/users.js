@@ -6,10 +6,10 @@ module.exports.signUp = (req, res, next) => {
   try {
     signUpValidator.validate(req.body);
   } catch (error) {
-    throw error;
+    return next(error);
   }
 
-  usersService
+  return usersService
     .signUp(req.body)
     .then(() => {
       logger.info(`Created user: ${JSON.stringify(req.body.firstName)}`);
