@@ -11,11 +11,10 @@ module.exports.signUp = (req, res, next) =>
     })
     .catch(next);
 
-module.exports.signIn = (req, _, next) => {
+module.exports.signIn = (req, res, next) =>
   credentialsHelper
     .signIn(req.body)
-    .then(user => {
-      console.log(user);
+    .then(token => {
+      res.status(200).send({ token: JSON.stringify(token) });
     })
     .catch(next);
-};
