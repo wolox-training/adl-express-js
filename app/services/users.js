@@ -7,7 +7,7 @@ module.exports.signUp = body =>
     if (user) {
       throw errors.emailInUseError();
     } else {
-      models.user
+      return models.user
         .create({
           firstName: body.firstName,
           lastName: body.lastName,
