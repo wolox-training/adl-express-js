@@ -76,7 +76,7 @@
     "jwt-simple": "^0.5.1",
     "pg": "^7.4.1",
     "sequelize": "^5.10.1",
-    "swagger-ui-express": "^4.0.7",
+    "swagger-ui-express": "^4.1.2",
     "umzug": "^2.1.0"
   },
   "devDependencies": {
