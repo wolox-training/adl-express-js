@@ -9,3 +9,5 @@ module.exports.signUp = (req, res, next) =>
       res.status(201).send({ firstName: req.body.firstName });
     })
     .catch(next);
+
+module.exports.signIn = () => 0;
