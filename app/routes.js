@@ -3,7 +3,7 @@
 const { healthCheck } = require('./controllers/healthCheck');
 const albumsController = require('./controllers/albums');
 const usersController = require('./controllers/users');
-const signUpMiddleware = require('./middlewares/sign_up_validator');
+const signUpMiddleware = require('./middlewares/sign_up');
 
 exports.init = app => {
   app.get('/health', healthCheck);
