@@ -20,3 +20,6 @@ exports.emailError = message => internalError(message, exports.EMAIL_ERROR);
 
 exports.PASSWORD_ERROR = 'invalid_password';
 exports.passwordError = message => internalError(message, exports.PASSWORD_ERROR);
+
+exports.INVALID_CREDENTIALS = 'invalid_credentials';
+exports.invalidCredentials = message => internalError(message, exports.INVALID_CREDENTIALS);
