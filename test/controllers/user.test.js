@@ -85,4 +85,34 @@ describe('usersController.signIn', () => {
           })
       );
   });
+
+  it('Tries to log in with correct email but invalid password and fails ', () => {
+    userAttributes.password = 'password1923';
+    return request
+      .post('/users')
+      .send(userAttributes)
+      .then(() =>
+        request
+          .post('/users/sessions')
+          .send({ email: 'omar.rodriguez@wolox.com', password: 'invalidPassword18' })
+          .then(response => {
+            expect(response.body.message).toBe('Invalid credentials, please try again');
+          })
+      );
+  });
+
+  it('Tries to log in with invalid email and validator fails ', () => {
+    userAttributes.password = 'password1923';
+    return request
+      .post('/users')
+      .send(userAttributes)
+      .then(() =>
+        request
+          .post('/users/sessions')
+          .send({ email: 'omar.rodriguez@wolox.ed', password: 'password1923' })
+          .then(response => {
+            expect(response.body.internal_code).toBe('invalid_email');
+          })
+      );
+  });
 });
