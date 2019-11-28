@@ -10,7 +10,7 @@ module.exports.signIn = body =>
     })
     .then(user => {
       if (!user || !bcrypt.compareSync(body.password, user.password)) {
-        throw errors.invalidCredentials();
+        throw errors.invalidCredentials('Invalid credentials, please try again');
       }
 
       return jwt.encode(user.email, process.env.SECRET_KEY);

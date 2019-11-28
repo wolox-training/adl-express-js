@@ -1,4 +1,5 @@
 const supertest = require('supertest');
+const jwt = require('jwt-simple');
 const models = require('../../app/models/index');
 const app = require('../../app');
 
@@ -64,5 +65,24 @@ describe('usersController.signUp', () => {
       .then(response => {
         expect(response.body.internal_code).toBe('invalid_password');
       });
+  });
+});
+
+describe('usersController.signIn', () => {
+  it('Log in with previously created user', () => {
+    userAttributes.password = 'password1923';
+    return request
+      .post('/users')
+      .send(userAttributes)
+      .then(() =>
+        request
+          .post('/users/sessions')
+          .send({ email: 'omar.rodriguez@wolox.com', password: 'password1923' })
+          .then(response => {
+            expect(jwt.decode(JSON.parse(response.body.token), process.env.SECRET_KEY)).toBe(
+              'omar.rodriguez@wolox.com'
+            );
+          })
+      );
   });
 });
