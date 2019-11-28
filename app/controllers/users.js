@@ -1,6 +1,7 @@
 const logger = require('../logger');
 const usersService = require('../services/users');
 const credentialsHelper = require('../helpers/users/validate_credentials');
+const models = require('../models/index');
 
 module.exports.signUp = (req, res, next) =>
   usersService
@@ -16,5 +17,13 @@ module.exports.signIn = (req, res, next) =>
     .signIn(req.body)
     .then(token => {
       res.status(200).send({ response: token });
+    })
+    .catch(next);
+
+module.exports.index = (req, res, next) =>
+  models.user
+    .findAll()
+    .then(users => {
+      res.status(200).send({ response: users });
     })
     .catch(next);
