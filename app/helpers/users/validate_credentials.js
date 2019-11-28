@@ -14,4 +14,5 @@ module.exports.signIn = body =>
       }
 
       return jwt.encode(user.email, process.env.SECRET_KEY);
-    });
+    })
+    .catch(error => errors.databaseError(error));
