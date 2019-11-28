@@ -20,10 +20,12 @@ module.exports.signIn = (req, res, next) =>
     })
     .catch(next);
 
-module.exports.index = (req, res, next) =>
-  models.user
+module.exports.index = (req, res, next) => {
+  console.log('entra en el controller');
+  return models.user
     .findAll()
     .then(users => {
       res.status(200).send({ response: users });
     })
     .catch(next);
+};
