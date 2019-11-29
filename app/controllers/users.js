@@ -1,9 +1,6 @@
 const logger = require('../logger');
 const usersService = require('../services/users');
 const credentialsHelper = require('../helpers/users/validate_credentials');
-const models = require('../models/index');
-
-const numberOfRecords = 10;
 
 module.exports.signUp = (req, res, next) =>
   usersService
@@ -23,8 +20,8 @@ module.exports.signIn = (req, res, next) =>
     .catch(next);
 
 module.exports.index = (req, res, next) =>
-  models.user
-    .findAndCountAll({ offset: numberOfRecords * req.query.page, limit: numberOfRecords })
+  usersService
+    .index(req.query.page)
     .then(users => {
       res.status(200).send({ response: users });
     })

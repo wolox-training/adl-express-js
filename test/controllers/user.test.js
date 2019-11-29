@@ -1,5 +1,6 @@
 const supertest = require('supertest');
 const jwt = require('jwt-simple');
+const { factory } = require('factory-girl');
 const models = require('../../app/models/index');
 const app = require('../../app');
 
@@ -10,6 +11,30 @@ const userAttributes = {
   email: 'omar.rodriguez@wolox.com',
   password: 'password1923'
 };
+
+const User = models.user;
+
+factory.define('user', User, {
+  firstName: Math.random()
+    .toString(36)
+    .substring(2, 15),
+  lastName: Math.random()
+    .toString(36)
+    .substring(2, 15),
+  email: `${Math.random()
+    .toString(36)
+    .substring(2, 15)}@wolox.com`,
+  password: 'passwordRandom132'
+});
+
+const createAndSignInUser = options =>
+  factory.create('user', { ...options, password: 'wolox1189' }).then(createdUser => {
+    const { email } = createdUser;
+    return request
+      .post('/users/sessions')
+      .send({ email, password: 'wolox1189' })
+      .then(token => token);
+  });
 
 describe('usersController.signUp', () => {
   it('Creates a user', () =>
@@ -115,4 +140,17 @@ describe('usersController.signIn', () => {
           })
       );
   });
+});
+
+describe('usersController.users', () => {
+  it.only('List users', () =>
+    factory.build('user').then(() =>
+      request
+        .get('/users')
+        .send({ page: 0 })
+        .then(response => {
+          debugger;
+          expect(response).toBe(4);
+        })
+    ));
 });
