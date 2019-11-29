@@ -22,5 +22,6 @@ module.exports.validate = (req, _, next) => {
     throw errors.passwordError();
   }
 
+  console.log(`el mail es => ${req.body.email}`);
   return next();
 };

@@ -8,7 +8,7 @@ const request = supertest(app);
 const userAttributes = {
   firstName: 'Omar',
   lastName: 'Rodriguez',
-  email: 'omar.rodriguez@wolox.com',
+  email: 'omar.rodriguez@wolox.co',
   password: 'password1923'
 };
 
@@ -21,20 +21,22 @@ factory.define('user', User, {
   lastName: Math.random()
     .toString(36)
     .substring(2, 15),
-  email: `${Math.random()
-    .toString(36)
-    .substring(2, 15)}@wolox.com`,
+  email: 'alejandro.gonzalez@wolox.co',
   password: 'passwordRandom132'
 });
 
-const createAndSignInUser = options =>
-  factory.create('user', { ...options, password: 'wolox1189' }).then(createdUser => {
-    const { email } = createdUser;
-    return request
-      .post('/users/sessions')
-      .send({ email, password: 'wolox1189' })
-      .then(token => token);
-  });
+const createAndSignInUser = () => {
+  userAttributes.password = 'password1923';
+  return request
+    .post('/users')
+    .send(userAttributes)
+    .then(() =>
+      request
+        .post('/users/sessions')
+        .send({ email: 'omar.rodriguez@wolox.co', password: 'password1923' })
+        .then(response => response.body.response)
+    );
+};
 
 describe('usersController.signUp', () => {
   it('Creates a user', () =>
@@ -144,13 +146,13 @@ describe('usersController.signIn', () => {
 
 describe('usersController.users', () => {
   it.only('List users', () =>
-    factory.build('user').then(() =>
+    createAndSignInUser().then(token =>
       request
         .get('/users')
+        .set('token', token)
         .send({ page: 0 })
         .then(response => {
-          debugger;
-          expect(response).toBe(4);
+          expect(response.body).toBe('ok');
         })
     ));
 });

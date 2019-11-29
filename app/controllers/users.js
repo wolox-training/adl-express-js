@@ -25,4 +25,4 @@ module.exports.index = (req, res, next) =>
     .then(users => {
       res.status(200).send({ response: users });
     })
-    .catch(next);
+    .catch(() => next);
