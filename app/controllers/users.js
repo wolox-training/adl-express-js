@@ -3,6 +3,8 @@ const usersService = require('../services/users');
 const credentialsHelper = require('../helpers/users/validate_credentials');
 const models = require('../models/index');
 
+const numberOfRecords = 10;
+
 module.exports.signUp = (req, res, next) =>
   usersService
     .signUp(req.body)
@@ -22,7 +24,7 @@ module.exports.signIn = (req, res, next) =>
 
 module.exports.index = (req, res, next) =>
   models.user
-    .findAll()
+    .findAndCountAll({ offset: numberOfRecords * req.query.page, limit: numberOfRecords })
     .then(users => {
       res.status(200).send({ response: users });
     })
