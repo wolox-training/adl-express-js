@@ -13,14 +13,14 @@ const validatePassword = password => {
   return number.test(password) && letter.test(password) && password.length > PASSWORD_MIN_LENGTH;
 };
 
-module.exports.validate = body => {
-  if (!validateEmail(body.email)) {
+module.exports.validate = (req, _, next) => {
+  if (!validateEmail(req.body.email)) {
     throw errors.emailError();
   }
 
-  if (!validatePassword(body.password)) {
+  if (!validatePassword(req.body.password)) {
     throw errors.passwordError();
   }
 
-  return true;
+  return next();
 };
