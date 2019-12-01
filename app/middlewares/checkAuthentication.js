@@ -10,7 +10,7 @@ const decode = token => {
     })
     .then(email => {
       if (!email) {
-        throw errors.invalidCredentials();
+        throw errors.invalidToken();
       }
     });
 };
@@ -19,7 +19,7 @@ module.exports.validate = (req, res, next) => {
   try {
     decode(req.headers.token);
   } catch (e) {
-    throw errors.invalidCredentials();
+    throw errors.invalidToken();
   }
 
   return next();

@@ -149,7 +149,7 @@ describe('usersController.users', () => {
         .set('token', '43ldlds.3023032.adlfkasls')
         .send({})
         .then(response => {
-          expect(response.body.internal_code).toBe('invalid_credentials');
+          expect(response.body.internal_code).toBe('invalid_token');
         })
     ));
 });
