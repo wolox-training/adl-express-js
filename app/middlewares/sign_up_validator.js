@@ -14,7 +14,6 @@ const validatePassword = password => {
 };
 
 module.exports.validate = body => {
-  console.log('----------------------------------------------------------entra en el validador');
   if (!validateEmail(body.email)) {
     throw errors.emailError();
   }
