@@ -8,7 +8,7 @@ const request = supertest(app);
 const userAttributes = {
   firstName: 'Omar',
   lastName: 'Rodriguez',
-  email: 'omar.rodriguez@wolox.co',
+  email: 'omar.rodriguez@wolox.com',
   password: 'password1923'
 };
 
@@ -21,7 +21,7 @@ factory.define('user', User, {
   lastName: Math.random()
     .toString(36)
     .substring(2, 15),
-  email: 'alejandro.gonzalez@wolox.co',
+  email: 'alejandro.gonzalez@wolox.com',
   password: 'passwordRandom132'
 });
 
@@ -33,7 +33,7 @@ const createAndSignInUser = () => {
     .then(() =>
       request
         .post('/users/sessions')
-        .send({ email: 'omar.rodriguez@wolox.co', password: 'password1923' })
+        .send({ email: 'omar.rodriguez@wolox.com', password: 'password1923' })
         .then(response => response.body.response)
     );
 };
@@ -145,14 +145,14 @@ describe('usersController.signIn', () => {
 });
 
 describe('usersController.users', () => {
-  it.only('List users', () =>
+  it('List users', () =>
     createAndSignInUser().then(token =>
       request
-        .get('/users')
+        .get('/users?page=0')
         .set('token', token)
-        .send({ page: 0 })
+        .send({})
         .then(response => {
-          expect(response.body).toBe('ok');
+          expect(response.body.response.rows[0].email).toBe('omar.rodriguez@wolox.com');
         })
     ));
 });
