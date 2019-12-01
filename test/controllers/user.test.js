@@ -1,6 +1,5 @@
 const supertest = require('supertest');
 const jwt = require('jwt-simple');
-const { factory } = require('factory-girl');
 const models = require('../../app/models/index');
 const app = require('../../app');
 
@@ -11,19 +10,6 @@ const userAttributes = {
   email: 'omar.rodriguez@wolox.com',
   password: 'password1923'
 };
-
-const User = models.user;
-
-factory.define('user', User, {
-  firstName: Math.random()
-    .toString(36)
-    .substring(2, 15),
-  lastName: Math.random()
-    .toString(36)
-    .substring(2, 15),
-  email: 'alejandro.gonzalez@wolox.com',
-  password: 'passwordRandom132'
-});
 
 const createAndSignInUser = () => {
   userAttributes.password = 'password1923';
@@ -153,6 +139,17 @@ describe('usersController.users', () => {
         .send({})
         .then(response => {
           expect(response.body.response.rows[0].email).toBe('omar.rodriguez@wolox.com');
+        })
+    ));
+
+  it('Try to list user without correct token', () =>
+    createAndSignInUser().then(() =>
+      request
+        .get('/users?page=0')
+        .set('token', '43ldlds.3023032.adlfkasls')
+        .send({})
+        .then(response => {
+          expect(response.body.internal_code).toBe('invalid_credentials');
         })
     ));
 });

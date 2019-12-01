@@ -19,7 +19,7 @@ module.exports.validate = (req, res, next) => {
   try {
     decode(req.headers.token);
   } catch (e) {
-    res.send({ error: e.message });
+    throw errors.invalidCredentials();
   }
 
   return next();
