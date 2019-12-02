@@ -1,7 +1,10 @@
 const supertest = require('supertest');
 const jwt = require('jwt-simple');
+const bcrypt = require('bcrypt');
 const models = require('../../app/models/index');
 const app = require('../../app');
+
+const saltRounds = 10;
 
 const request = supertest(app);
 const userAttributes = {
@@ -9,6 +12,15 @@ const userAttributes = {
   lastName: 'Rodriguez',
   email: 'omar.rodriguez@wolox.com',
   password: 'password1923'
+};
+
+const createUser = () => {
+  models.user.create({
+    firstName: 'Omar',
+    lastName: 'Rodriguez',
+    email: 'omar.rodriguez@wolox.com',
+    password: bcrypt.hashSync('password1923', saltRounds)
+  });
 };
 
 describe('usersController.signUp', () => {
@@ -69,7 +81,7 @@ describe('usersController.signUp', () => {
 });
 
 describe('usersController.signIn', () => {
-  beforeEach(() => request.post('/users').send(userAttributes));
+  beforeEach(() => createUser());
   it('Log in with previously created user', () => {
     userAttributes.password = 'password1923';
     return request
