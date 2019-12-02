@@ -17,8 +17,8 @@ const userAttributes = {
 
 const createUser = () =>
   models.user.create({
-    firstName: faker.name.findName(),
-    lastName: faker.name.lastName(),
+    firstName: faker.name.firstName(),
+    lastName: faker.name.firstName(),
     email: 'omar.rodriguez@wolox.com',
     password: bcrypt.hashSync('password1923', saltRounds)
   });
@@ -82,22 +82,14 @@ describe('usersController.signUp', () => {
 
 describe('usersController.signIn', () => {
   beforeEach(() => createUser());
-  it('Log in with previously created user', () => {
-    userAttributes.password = 'password1923';
-    return request
-      .post('/users')
-      .send(userAttributes)
-      .then(() =>
-        request
-          .post('/users/sessions')
-          .send({ email: 'omar.rodriguez@wolox.com', password: 'password1923' })
-          .then(response => {
-            expect(jwt.decode(response.body.response, process.env.SECRET_KEY)).toBe(
-              'omar.rodriguez@wolox.com'
-            );
-          })
-      );
-  });
+
+  it('Log in with previously created user', () =>
+    request
+      .post('/users/sessions')
+      .send({ email: 'omar.rodriguez@wolox.com', password: 'password1923' })
+      .then(response => {
+        expect(jwt.decode(response.body.response, process.env.SECRET_KEY)).toBe('omar.rodriguez@wolox.com');
+      }));
 
   it('Tries to log in with correct email but invalid password and fails ', () =>
     request
