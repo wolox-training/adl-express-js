@@ -35,6 +35,16 @@ if (!config.isTesting) app.use(expressMiddleware({ loggerFn: logger.info }));
 
 routes.init(app);
 
+app.use(
+  expressMiddleware({
+    loggerFn: logger.info,
+    obfuscatePlaceholder: '[SECRET]',
+    obfuscateBody: {
+      '/users/sessions': { POST: true },
+      '/users': { POST: true }
+    }
+  })
+);
 app.use(errors.handle);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocumentation));
 
