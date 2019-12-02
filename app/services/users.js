@@ -3,6 +3,7 @@ const jwt = require('jwt-simple');
 const models = require('../models/index');
 const errors = require('../errors');
 const generatePassword = require('../helpers/users/generatePassword');
+const logger = require('../logger');
 
 const numberOfRecords = 10;
 
@@ -25,9 +26,10 @@ module.exports.signUp = body =>
   });
 
 module.exports.index = page =>
-  models.user
-    .findAndCountAll({ offset: numberOfRecords * page, limit: numberOfRecords })
-    .catch(error => error);
+  models.user.findAndCountAll({ offset: numberOfRecords * page, limit: numberOfRecords }).catch(error => {
+    logger.error(error);
+    return error;
+  });
 
 module.exports.signIn = body =>
   models.user

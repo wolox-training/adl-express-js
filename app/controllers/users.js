@@ -25,4 +25,7 @@ module.exports.index = (req, res, next) =>
     .then(users => {
       res.status(200).send({ response: users });
     })
-    .catch(() => next);
+    .catch(error => {
+      logger.error(error);
+      return next;
+    });
