@@ -1,6 +1,6 @@
 const models = require('../models/index');
 const errors = require('../errors');
-const generatePassword = require('../helpers/users/generate_password');
+const generatePassword = require('../helpers/users/generatePassword');
 
 module.exports.signUp = body =>
   models.user.findOne({ where: { email: body.email } }).then(user => {
