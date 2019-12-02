@@ -24,6 +24,8 @@ const createAndSignInUser = () => {
     );
 };
 
+const createUser = () => request.post('/users').send(userAttributes);
+
 describe('usersController.signUp', () => {
   it('Creates a user', () =>
     request
@@ -81,53 +83,36 @@ describe('usersController.signUp', () => {
   });
 });
 
-describe('usersController.signIn', () => {
-  it('Log in with previously created user', () => {
+describe('usersController.screateUserignIn', () => {
+  beforeEach(() => {
+    userAttributes.email = 'omar.rodriguez@wolox.com';
     userAttributes.password = 'password1923';
-    return request
-      .post('/users')
-      .send(userAttributes)
-      .then(() =>
-        request
-          .post('/users/sessions')
-          .send({ email: 'omar.rodriguez@wolox.com', password: 'password1923' })
-          .then(response => {
-            expect(jwt.decode(response.body.response, process.env.SECRET_KEY)).toBe(
-              'omar.rodriguez@wolox.com'
-            );
-          })
-      );
+    return createUser();
   });
 
-  it('Tries to log in with correct email but invalid password and fails ', () => {
-    userAttributes.password = 'password1923';
-    return request
-      .post('/users')
-      .send(userAttributes)
-      .then(() =>
-        request
-          .post('/users/sessions')
-          .send({ email: 'omar.rodriguez@wolox.com', password: 'invalidPassword18' })
-          .then(response => {
-            expect(response.body.message).toBe('Invalid credentials, please try again');
-          })
-      );
-  });
+  it('Log in with previously created user', () =>
+    request
+      .post('/users/sessions')
+      .send({ email: 'omar.rodriguez@wolox.com', password: 'password1923' })
+      .then(response => {
+        expect(jwt.decode(response.body.response, process.env.SECRET_KEY)).toBe('omar.rodriguez@wolox.com');
+      }));
 
-  it('Tries to log in with invalid email and validator fails ', () => {
-    userAttributes.password = 'password1923';
-    return request
-      .post('/users')
-      .send(userAttributes)
-      .then(() =>
-        request
-          .post('/users/sessions')
-          .send({ email: 'omar.rodriguez@wolox.ed', password: 'password1923' })
-          .then(response => {
-            expect(response.body.internal_code).toBe('invalid_email');
-          })
-      );
-  });
+  it('Tries to log in with correct email but invalid password and fails ', () =>
+    request
+      .post('/users/sessions')
+      .send({ email: 'omar.rodriguez@wolox.com', password: 'invalidPassword18' })
+      .then(response => {
+        expect(response.body.message).toBe('Invalid credentials, please try again');
+      }));
+
+  it('Tries to log in with invalid email and validator fails ', () =>
+    request
+      .post('/users/sessions')
+      .send({ email: 'omar.rodriguez@wolox.ed', password: 'password1923' })
+      .then(response => {
+        expect(response.body.internal_code).toBe('invalid_email');
+      }));
 });
 
 describe('usersController.users', () => {

@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jwt-simple');
-const models = require('../../models/index');
-const errors = require('../../errors');
+const models = require('../models/index');
+const errors = require('../errors');
 
 module.exports.signIn = body =>
   models.user

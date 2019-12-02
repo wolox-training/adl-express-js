@@ -1,6 +1,6 @@
 const logger = require('../logger');
 const usersService = require('../services/users');
-const credentialsHelper = require('../helpers/users/validate_credentials');
+const credentialsHelper = require('../services/validateCredentials');
 
 module.exports.signUp = (req, res, next) =>
   usersService

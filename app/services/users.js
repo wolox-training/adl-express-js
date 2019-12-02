@@ -1,6 +1,8 @@
+const bcrypt = require('bcrypt');
+const jwt = require('jwt-simple');
 const models = require('../models/index');
 const errors = require('../errors');
-const generatePassword = require('../helpers/users/generate_password');
+const generatePassword = require('../helpers/users/generatePassword');
 
 const numberOfRecords = 10;
 
@@ -26,3 +28,16 @@ module.exports.index = page =>
   models.user
     .findAndCountAll({ offset: numberOfRecords * page, limit: numberOfRecords })
     .catch(error => error);
+
+module.exports.signIn = body =>
+  models.user
+    .findOne({
+      where: { email: body.email }
+    })
+    .then(user => {
+      if (!user || !bcrypt.compareSync(body.password, user.password)) {
+        throw errors.invalidCredentials('Invalid credentials, please try again');
+      }
+
+      return jwt.encode(user.email, process.env.SECRET_KEY);
+    });
