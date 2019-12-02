@@ -1,5 +1,8 @@
 const supertest = require('supertest');
 const jwt = require('jwt-simple');
+const { factory } = require('factory-girl');
+const faker = require('faker');
+const bcrypt = require('bcrypt');
 const models = require('../../app/models/index');
 const app = require('../../app');
 
@@ -11,20 +14,23 @@ const userAttributes = {
   password: 'password1923'
 };
 
+const signUpUser = () => request.post('/users').send(userAttributes);
 const createAndSignInUser = () => {
   userAttributes.password = 'password1923';
-  return request
-    .post('/users')
-    .send(userAttributes)
-    .then(() =>
-      request
-        .post('/users/sessions')
-        .send({ email: 'omar.rodriguez@wolox.com', password: 'password1923' })
-        .then(response => response.body.response)
-    );
+  return signUpUser().then(() =>
+    request
+      .post('/users/sessions')
+      .send({ email: 'omar.rodriguez@wolox.com', password: 'password1923' })
+      .then(response => response.body.response)
+  );
 };
 
-const createUser = () => request.post('/users').send(userAttributes);
+factory.define('user', models.user, {
+  firstName: faker.name.firstName,
+  lastName: faker.name.lastName,
+  email: faker.internet.email,
+  password: bcrypt.hashSync('password1923', 10)
+});
 
 describe('usersController.signUp', () => {
   it('Creates a user', () =>
@@ -87,7 +93,7 @@ describe('usersController.screateUserignIn', () => {
   beforeEach(() => {
     userAttributes.email = 'omar.rodriguez@wolox.com';
     userAttributes.password = 'password1923';
-    return createUser();
+    return signUpUser();
   });
 
   it('Log in with previously created user', () =>
@@ -117,14 +123,16 @@ describe('usersController.screateUserignIn', () => {
 
 describe('usersController.users', () => {
   it('List users', () =>
-    createAndSignInUser().then(token =>
-      request
-        .get('/users?page=0')
-        .set('token', token)
-        .send({})
-        .then(response => {
-          expect(response.body.response.rows[0].email).toBe('omar.rodriguez@wolox.com');
-        })
+    factory.createMany('user', 5).then(() =>
+      createAndSignInUser().then(token =>
+        request
+          .get('/users?page=0')
+          .set('token', token)
+          .send({})
+          .then(response => {
+            expect(response.body.response.count).toBe(6);
+          })
+      )
     ));
 
   it('Try to list user without correct token', () =>
