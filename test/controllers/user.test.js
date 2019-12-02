@@ -1,7 +1,7 @@
 const supertest = require('supertest');
 const jwt = require('jwt-simple');
 const bcrypt = require('bcrypt');
-const { factory } = require('factory-girl');
+const faker = require('faker');
 const models = require('../../app/models/index');
 const app = require('../../app');
 
@@ -15,16 +15,13 @@ const userAttributes = {
   password: 'password1923'
 };
 
-const createUser = () => {
+const createUser = () =>
   models.user.create({
-    firstName: 'Omar',
-    lastName: 'Rodriguez',
+    firstName: faker.name.findName(),
+    lastName: faker.name.lastName(),
     email: 'omar.rodriguez@wolox.com',
     password: bcrypt.hashSync('password1923', saltRounds)
   });
-};
-
-factory.define('user', models.user, {});
 
 describe('usersController.signUp', () => {
   it('Creates a user', () =>
