@@ -21,6 +21,7 @@
     "start-dev": "nodemon --inspect server.js",
     "prestart-dev": "npm run lint",
     "migrations": "sequelize db:migrate",
+    "migrations:rollback": "sequelize db:migrate:undo",
     "migrations-test": "NODE_ENV=testing npm run migrations",
     "start": "node server.js"
   },
