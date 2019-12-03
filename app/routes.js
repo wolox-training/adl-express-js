@@ -3,6 +3,7 @@
 const { healthCheck } = require('./controllers/healthCheck');
 const albumsController = require('./controllers/albums');
 const usersController = require('./controllers/users');
+const adminController = require('./controllers/admins');
 const credentialsMiddleware = require('./middlewares/credentialsValidator');
 const authenticationMiddleware = require('./middlewares/checkAuthentication');
 
