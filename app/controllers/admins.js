@@ -1,5 +1,12 @@
 const logger = require('../logger');
-const usersService = require('../services/users');
-const credentialsHelper = require('../services/validateCredentials');
+const adminsService = require('../services/admins');
 
-module.exports.signUp = (req, res, next) => {};
+module.exports.signUp = (req, res, next) => {
+  adminsService
+    .signUp(req.body)
+    .then(() => {
+      logger.info(`Created admin user: ${JSON.stringify(req.body.firstName)}`);
+      res.status(201).send({ adminName: req.body.firstName });
+    })
+    .catch(next);
+};
