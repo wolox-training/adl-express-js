@@ -15,5 +15,6 @@ exports.init = app => {
   app.get('/albums/:id/photos', albumsController.photos);
   app.post('/users', [credentialsMiddleware.validate], usersController.signUp);
   app.post('/users/sessions', [credentialsMiddleware.validate], usersController.signIn);
+  app.post('/admin/users', [credentialsMiddleware.validate], adminController.signUp);
   app.get('/users', [authenticationMiddleware.validate], usersController.index);
 };
