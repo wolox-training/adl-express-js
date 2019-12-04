@@ -20,14 +20,12 @@ const createUser = (firstName, lastName, email, password) =>
   factory.create('user', userAttributes(firstName, lastName, email, bcrypt.hashSync(password, 10)));
 
 const createAndSignInUser = () =>
-  factory
-    .create('user', userAttributes('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923'))
-    .then(() =>
-      request
-        .post('/users/sessions')
-        .send({ email: 'omar.rodriguez@wolox.com', password: 'password1923' })
-        .then(response => response.body.response)
-    );
+  createUser('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923').then(() =>
+    request
+      .post('/users/sessions')
+      .send({ email: 'omar.rodriguez@wolox.com', password: 'password1923' })
+      .then(response => response.body.response)
+  );
 
 describe('usersController.signUp', () => {
   it('Creates a user', () =>
@@ -82,14 +80,11 @@ describe('usersController.signUp', () => {
 describe('usersController.createUserSignIn', () => {
   beforeEach(() => createUser('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923'));
 
-  it.only('Log in with previously created user', () =>
+  it('Log in with previously created user', () =>
     request
       .post('/users/sessions')
       .send({ email: 'omar.rodriguez@wolox.com', password: 'password1923' })
       .then(response => {
-        return models.user.findOne().then(response => {
-          debugger;
-        });
         expect(jwt.decode(response.body.response, process.env.SECRET_KEY)).toBe('omar.rodriguez@wolox.com');
       }));
 
