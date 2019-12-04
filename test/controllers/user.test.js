@@ -11,7 +11,8 @@ const userAttributes = {
   firstName: 'Omar',
   lastName: 'Rodriguez',
   email: 'omar.rodriguez@wolox.com',
-  password: 'password1923'
+  password: 'password1923',
+  type: 'user'
 };
 
 const signUpUser = () => request.post('/users').send(userAttributes);
