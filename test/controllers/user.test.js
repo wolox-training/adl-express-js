@@ -1,6 +1,7 @@
 const supertest = require('supertest');
 const jwt = require('jwt-simple');
 const { factory } = require('factory-girl');
+const bcrypt = require('bcrypt');
 const models = require('../../app/models/index');
 const app = require('../../app');
 const { factoryAllModels } = require('../factory/factory_by_models');
@@ -16,15 +17,17 @@ const userAttributes = (firstName, lastName, email, password) => ({
 });
 
 const createUser = (firstName, lastName, email, password) =>
-  request.post('/users').send(userAttributes(firstName, lastName, email, password));
+  factory.create('user', userAttributes(firstName, lastName, email, bcrypt.hashSync(password, 10)));
 
 const createAndSignInUser = () =>
-  createUser('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923').then(() =>
-    request
-      .post('/users/sessions')
-      .send({ email: 'omar.rodriguez@wolox.com', password: 'password1923' })
-      .then(response => response.body.response)
-  );
+  factory
+    .create('user', userAttributes('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923'))
+    .then(() =>
+      request
+        .post('/users/sessions')
+        .send({ email: 'omar.rodriguez@wolox.com', password: 'password1923' })
+        .then(response => response.body.response)
+    );
 
 describe('usersController.signUp', () => {
   it('Creates a user', () =>
@@ -77,13 +80,16 @@ describe('usersController.signUp', () => {
 });
 
 describe('usersController.createUserSignIn', () => {
-  beforeEach(() => createUser('Omar', 'rodriguez', 'omar.rodriguez@wolox.com', 'password1923'));
+  beforeEach(() => createUser('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923'));
 
-  it('Log in with previously created user', () =>
+  it.only('Log in with previously created user', () =>
     request
       .post('/users/sessions')
       .send({ email: 'omar.rodriguez@wolox.com', password: 'password1923' })
       .then(response => {
+        return models.user.findOne().then(response => {
+          debugger;
+        });
         expect(jwt.decode(response.body.response, process.env.SECRET_KEY)).toBe('omar.rodriguez@wolox.com');
       }));
 

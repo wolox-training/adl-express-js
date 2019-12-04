@@ -5,7 +5,7 @@ const errors = require('../errors');
 const generatePassword = require('../helpers/users/generatePassword');
 const logger = require('../logger');
 
-const numberOfRecords = process.env.NUMBER_OF_ROUNDS;
+const numberOfRecords = process.env.NUMBER_OF_RECORDS;
 
 module.exports.signUp = body =>
   models.user.findOne({ where: { email: body.email } }).then(user => {
