@@ -15,6 +15,7 @@ module.exports.signIn = (req, res, next) =>
   credentialsHelper
     .signIn(req.body)
     .then(token => {
+      logger.info(`Sign in with user: ${JSON.stringify(req.body.email)}`);
       res.status(200).send({ response: token });
     })
     .catch(next);
