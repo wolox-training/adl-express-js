@@ -1,15 +1,11 @@
 const { factory } = require('factory-girl');
-const User = require('../../app/models/user');
+const faker = require('faker');
+const bcrypt = require('bcrypt');
+const models = require('../../app/models/index');
 
-factory.define('user', User, {
-  firstName: Math.random()
-    .toString(36)
-    .substring(2, 15),
-  lastName: Math.random()
-    .toString(36)
-    .substring(2, 15),
-  email: `${Math.random()
-    .toString(36)
-    .substring(2, 15)}@wolox.com`,
-  password: 'passwordRandom132'
+factory.define('user', models.user, {
+  firstName: faker.name.firstName,
+  lastName: faker.name.lastName,
+  email: faker.internet.email,
+  password: bcrypt.hashSync('password1923', 10)
 });
