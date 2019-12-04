@@ -1,43 +1,37 @@
 const supertest = require('supertest');
 const jwt = require('jwt-simple');
 const { factory } = require('factory-girl');
-const faker = require('faker');
 const bcrypt = require('bcrypt');
 const models = require('../../app/models/index');
 const app = require('../../app');
+const { factoryAllModels } = require('../factory/factory_by_models');
+
+factoryAllModels();
 
 const request = supertest(app);
-const userAttributes = {
-  firstName: 'Omar',
-  lastName: 'Rodriguez',
-  email: 'omar.rodriguez@wolox.com',
-  password: 'password1923',
-  type: 'user'
-};
+const userAttributes = (firstName, lastName, email, password) => ({
+  firstName,
+  lastName,
+  email,
+  password
+});
 
-const signUpUser = () => request.post('/users').send(userAttributes);
-const createAndSignInUser = () => {
-  userAttributes.password = 'password1923';
-  return signUpUser().then(() =>
+const createUser = (firstName, lastName, email, password) =>
+  factory.create('user', userAttributes(firstName, lastName, email, bcrypt.hashSync(password, 10)));
+
+const createAndSignInUser = () =>
+  createUser('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923').then(() =>
     request
       .post('/users/sessions')
       .send({ email: 'omar.rodriguez@wolox.com', password: 'password1923' })
       .then(response => response.body.response)
   );
-};
-
-factory.define('user', models.user, {
-  firstName: faker.name.firstName,
-  lastName: faker.name.lastName,
-  email: faker.internet.email,
-  password: bcrypt.hashSync('password1923', 10)
-});
 
 describe('usersController.signUp', () => {
   it('Creates a user', () =>
     request
       .post('/users')
-      .send(userAttributes)
+      .send(userAttributes('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923'))
       .then(response => {
         expect(response.body.firstName).toBe('Omar');
       })
@@ -58,44 +52,33 @@ describe('usersController.signUp', () => {
   it('Try to create a existing user and fails', () =>
     request
       .post('/users')
-      .send(userAttributes)
+      .send(userAttributes('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923'))
       .then(() =>
         request
           .post('/users')
-          .send(userAttributes)
+          .send(userAttributes('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923'))
           .then(response => expect(response.body.internal_code).toBe('email_already_in_use'))
       ));
 
-  it('Try to create a user with invalid email and fails', () => {
-    userAttributes.email = 'omar.rodriguez@wolox.ed';
-
-    return request
+  it('Try to create a user with invalid email and fails', () =>
+    request
       .post('/users')
-      .send(userAttributes)
+      .send(userAttributes('Omar', 'Rodriguez', 'omar.rodriguez@wolox.ed', 'password1923'))
       .then(response => {
         expect(response.body.internal_code).toBe('invalid_email');
-      });
-  });
+      }));
 
-  it('Try to create a user with invalid password and fails', () => {
-    userAttributes.email = 'omar.rodriguez@wolox.com';
-    userAttributes.password = 'ab123';
-
-    return request
+  it('Try to create a user with invalid password and fails', () =>
+    request
       .post('/users')
-      .send(userAttributes)
+      .send(userAttributes('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'ab123'))
       .then(response => {
         expect(response.body.internal_code).toBe('invalid_password');
-      });
-  });
+      }));
 });
 
 describe('usersController.createUserSignIn', () => {
-  beforeEach(() => {
-    userAttributes.email = 'omar.rodriguez@wolox.com';
-    userAttributes.password = 'password1923';
-    return signUpUser();
-  });
+  beforeEach(() => createUser('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923'));
 
   it('Log in with previously created user', () =>
     request
