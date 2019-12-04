@@ -89,7 +89,7 @@ describe('usersController.signUp', () => {
   });
 });
 
-describe('usersController.screateUserignIn', () => {
+describe('usersController.createUserSignIn', () => {
   beforeEach(() => {
     userAttributes.email = 'omar.rodriguez@wolox.com';
     userAttributes.password = 'password1923';

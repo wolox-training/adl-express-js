@@ -18,7 +18,7 @@ exports.init = app => {
   app.post('/users/sessions', [credentialsMiddleware.validate], usersController.signIn);
   app.post(
     '/admin/users',
-    [authenticationMiddleware.validate, credentialsMiddleware.validate],
+    [authenticationMiddleware.validateAdmin, credentialsMiddleware.validate],
     adminController.signUp
   );
   app.get('/users', [authenticationMiddleware.validate], usersController.index);
