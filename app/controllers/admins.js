@@ -8,5 +8,8 @@ module.exports.signUp = (req, res, next) => {
       logger.info(`Created admin user: ${JSON.stringify(req.body.firstName)}`);
       res.status(201).send({ adminName: req.body.firstName });
     })
-    .catch(next);
+    .catch(error => {
+      logger.error(`An error occurs: ${JSON.stringify(error)}`);
+      return next;
+    });
 };
