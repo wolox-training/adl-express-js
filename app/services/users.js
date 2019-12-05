@@ -2,10 +2,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('jwt-simple');
 const models = require('../models/index');
 const errors = require('../errors');
+const config = require('../../config');
 const generatePassword = require('../helpers/users/generatePassword');
 const logger = require('../logger');
 
-const numberOfRecords = process.env.NUMBER_OF_RECORDS;
+const { numberOfRecords } = config.common.api;
 
 module.exports.signUp = body =>
   models.user.findOne({ where: { email: body.email } }).then(user => {
