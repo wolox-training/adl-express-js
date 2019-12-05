@@ -16,11 +16,11 @@ const userAttributes = (firstName, lastName, email, password) => ({
   password
 });
 
-const createUser = (firstName, lastName, email, password) =>
-  factory.create('user', userAttributes(firstName, lastName, email, bcrypt.hashSync(password, 10)));
+const createUser = (firstName, email, password) =>
+  factory.create('user', { firstName, email, password: bcrypt.hashSync(password, 10) });
 
 const createAndSignInUser = () =>
-  createUser('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923').then(() =>
+  createUser('Omar', 'omar.rodriguez@wolox.com', 'password1923').then(() =>
     request
       .post('/users/sessions')
       .send({ email: 'omar.rodriguez@wolox.com', password: 'password1923' })
@@ -78,7 +78,7 @@ describe('usersController.signUp', () => {
 });
 
 describe('usersController.createUserSignIn', () => {
-  beforeEach(() => createUser('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923'));
+  beforeEach(() => createUser('Omar', 'omar.rodriguez@wolox.com', 'password1923'));
 
   it('Log in with previously created user', () =>
     request
