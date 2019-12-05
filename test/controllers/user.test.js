@@ -16,7 +16,9 @@ const createUser = (firstName, lastName, email, password) =>
 
 describe('usersController.signUp', () => {
   it('Creates a user', () =>
-    createUser('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923')
+    request
+      .post('/users')
+      .send(userAttributes('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923'))
       .then(response => {
         expect(response.body.firstName).toBe('Omar');
       })
@@ -43,14 +45,20 @@ describe('usersController.signUp', () => {
     ));
 
   it('Try to create a user with invalid email and fails', () =>
-    createUser('Omar', 'Rodriguez', 'omar.rodriguez@wolox.ed', 'password1923').then(response => {
-      expect(response.body.internal_code).toBe('invalid_email');
-    }));
+    request
+      .post('/users')
+      .send(userAttributes('Omar', 'Rodriguez', 'omar.rodriguez@wolox.ed', 'password1923'))
+      .then(response => {
+        expect(response.body.internal_code).toBe('invalid_email');
+      }));
 
   it('Try to create a user with invalid password and fails', () =>
-    createUser('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'ab123').then(response => {
-      expect(response.body.internal_code).toBe('invalid_password');
-    }));
+    request
+      .post('/users')
+      .send(userAttributes('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'ab123'))
+      .then(response => {
+        expect(response.body.internal_code).toBe('invalid_password');
+      }));
 });
 
 describe('usersController.createUserSignIn', () => {
