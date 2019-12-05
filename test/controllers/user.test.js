@@ -1,7 +1,12 @@
 const supertest = require('supertest');
 const jwt = require('jwt-simple');
+const { factory } = require('factory-girl');
+const bcrypt = require('bcrypt');
 const models = require('../../app/models/index');
 const app = require('../../app');
+const { factoryAllModels } = require('../factory/factory_by_models');
+
+factoryAllModels();
 
 const request = supertest(app);
 const userAttributes = (firstName, lastName, email, password) => ({
@@ -12,11 +17,21 @@ const userAttributes = (firstName, lastName, email, password) => ({
 });
 
 const createUser = (firstName, lastName, email, password) =>
-  request.post('/users').send(userAttributes(firstName, lastName, email, password));
+  factory.create('user', userAttributes(firstName, lastName, email, bcrypt.hashSync(password, 10)));
+
+const createAndSignInUser = () =>
+  createUser('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923').then(() =>
+    request
+      .post('/users/sessions')
+      .send({ email: 'omar.rodriguez@wolox.com', password: 'password1923' })
+      .then(response => response.body.response)
+  );
 
 describe('usersController.signUp', () => {
   it('Creates a user', () =>
-    createUser('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923')
+    request
+      .post('/users')
+      .send(userAttributes('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923'))
       .then(response => {
         expect(response.body.firstName).toBe('Omar');
       })
@@ -43,18 +58,24 @@ describe('usersController.signUp', () => {
     ));
 
   it('Try to create a user with invalid email and fails', () =>
-    createUser('Omar', 'Rodriguez', 'omar.rodriguez@wolox.ed', 'password1923').then(response => {
-      expect(response.body.internal_code).toBe('invalid_email');
-    }));
+    request
+      .post('/users')
+      .send(userAttributes('Omar', 'Rodriguez', 'omar.rodriguez@wolox.ed', 'password1923'))
+      .then(response => {
+        expect(response.body.internal_code).toBe('invalid_email');
+      }));
 
   it('Try to create a user with invalid password and fails', () =>
-    createUser('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'ab123').then(response => {
-      expect(response.body.internal_code).toBe('invalid_password');
-    }));
+    request
+      .post('/users')
+      .send(userAttributes('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'ab123'))
+      .then(response => {
+        expect(response.body.internal_code).toBe('invalid_password');
+      }));
 });
 
 describe('usersController.createUserSignIn', () => {
-  beforeEach(() => createUser('Omar', 'rodriguez', 'omar.rodriguez@wolox.com', 'password1923'));
+  beforeEach(() => createUser('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923'));
 
   it('Log in with previously created user', () =>
     request
@@ -79,4 +100,30 @@ describe('usersController.createUserSignIn', () => {
       .then(response => {
         expect(response.body.internal_code).toBe('invalid_email');
       }));
+});
+
+describe('usersController.users', () => {
+  it('List users', () =>
+    factory.createMany('user', 5).then(() =>
+      createAndSignInUser().then(token =>
+        request
+          .get('/users?page=0')
+          .set('token', token)
+          .send({})
+          .then(response => {
+            expect(response.body.response.count).toBe(6);
+          })
+      )
+    ));
+
+  it('Try to list user without correct token', () =>
+    createAndSignInUser().then(() =>
+      request
+        .get('/users?page=0')
+        .set('token', '43ldlds.3023032.adlfkasls')
+        .send({})
+        .then(response => {
+          expect(response.body.internal_code).toBe('invalid_token');
+        })
+    ));
 });

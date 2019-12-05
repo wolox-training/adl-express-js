@@ -23,3 +23,6 @@ exports.passwordError = message => internalError(message, exports.PASSWORD_ERROR
 
 exports.INVALID_CREDENTIALS = 'invalid_credentials';
 exports.invalidCredentials = message => internalError(message, exports.INVALID_CREDENTIALS);
+
+exports.INVALID_TOKEN = 'invalid_token';
+exports.invalidToken = message => internalError(message, exports.INVALID_TOKEN);

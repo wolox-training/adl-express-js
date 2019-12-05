@@ -4,6 +4,7 @@ const { healthCheck } = require('./controllers/healthCheck');
 const albumsController = require('./controllers/albums');
 const usersController = require('./controllers/users');
 const credentialsMiddleware = require('./middlewares/credentialsValidator');
+const authenticationMiddleware = require('./middlewares/checkAuthentication');
 
 exports.init = app => {
   app.get('/health', healthCheck);
@@ -14,4 +15,5 @@ exports.init = app => {
   app.get('/albums/:id/photos', albumsController.photos);
   app.post('/users', [credentialsMiddleware.validate], usersController.signUp);
   app.post('/users/sessions', [credentialsMiddleware.validate], usersController.signIn);
+  app.get('/users', [authenticationMiddleware.validate], usersController.index);
 };
