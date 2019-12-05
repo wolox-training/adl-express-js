@@ -50,11 +50,13 @@ describe('usersController.signUp', () => {
       ));
 
   it('Try to create a existing user and fails', () =>
-    createUser('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923').then(() =>
+    createUser('Omar', 'omar.rodriguez@wolox.com', 'password1923').then(() =>
       request
         .post('/users')
         .send(userAttributes('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923'))
-        .then(response => expect(response.body.internal_code).toBe('email_already_in_use'))
+        .then(response => {
+          expect(response.body.internal_code).toBe('email_already_in_use');
+        })
     ));
 
   it('Try to create a user with invalid email and fails', () =>
