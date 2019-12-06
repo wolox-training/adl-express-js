@@ -25,3 +25,14 @@ exports.photos = albumId =>
     .catch(() => {
       throw errors.externalApiError('Error in external API');
     });
+
+exports.buy = albumId =>
+  axios
+    .get(`${apiUrl}/albums/${albumId}`)
+    .then(response => {
+      logger.info(`Album bought: ${JSON.stringify(response.data)}`);
+      return response;
+    })
+    .catch(() => {
+      throw errors.externalApiError('Error in external API');
+    });
