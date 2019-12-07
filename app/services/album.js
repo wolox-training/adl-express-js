@@ -26,7 +26,7 @@ exports.photos = albumId =>
       throw errors.externalApiError('Error in external API');
     });
 
-exports.buy = albumId =>
+/* exports.buy = albumId =>
   axios
     .get(`${apiUrl}/albums/${albumId}`)
     .then(response => {
@@ -36,3 +36,10 @@ exports.buy = albumId =>
     .catch(() => {
       throw errors.externalApiError('Error in external API');
     });
+    */
+
+exports.buy = async albumId => {
+  const response = await axios.get(`${apiUrl}/albums/${albumId}/photos`);
+  console.log(response);
+  return response;
+};
