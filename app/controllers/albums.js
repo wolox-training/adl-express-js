@@ -13,5 +13,3 @@ module.exports.photos = (req, res, next) => {
     .then(photosList => photosList)
     .catch(next);
 };
-
-module.exports.buy = (req, res, next) => albumsService.buy(req.params.id);

@@ -22,5 +22,5 @@ exports.init = app => {
     adminController.signUp
   );
   app.get('/users', [authenticationMiddleware.validate], usersController.index);
-  app.post('/albums/:id', [authenticationMiddleware.validate], albumsController.buy);
+  app.post('/albums/:id', [authenticationMiddleware.validate], usersController.buy);
 };

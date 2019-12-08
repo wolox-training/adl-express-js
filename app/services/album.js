@@ -1,6 +1,7 @@
 const axios = require('axios');
 const logger = require('../logger');
 const errors = require('../errors');
+const models = require('../models/index');
 
 const apiUrl = 'https://jsonplaceholder.typicode.com';
 
@@ -26,20 +27,8 @@ exports.photos = albumId =>
       throw errors.externalApiError('Error in external API');
     });
 
-/* exports.buy = albumId =>
-  axios
-    .get(`${apiUrl}/albums/${albumId}`)
-    .then(response => {
-      logger.info(`Album bought: ${JSON.stringify(response.data)}`);
-      return response;
-    })
-    .catch(() => {
-      throw errors.externalApiError('Error in external API');
-    });
-    */
-
 exports.buy = async albumId => {
-  const response = await axios.get(`${apiUrl}/albums/${albumId}/photos`);
-  console.log(response);
-  return response;
+  const response = await axios.get(`${apiUrl}/albums/${albumId}`);
+  const newAlbum = await models.album.create({ title: response.data.title });
+  return newAlbum;
 };

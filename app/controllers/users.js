@@ -1,5 +1,6 @@
 const logger = require('../logger');
 const usersService = require('../services/users');
+const albumsService = require('../services/album');
 const credentialsHelper = require('../services/validateCredentials');
 
 module.exports.signUp = (req, res, next) =>
@@ -27,3 +28,8 @@ module.exports.index = (req, res, next) =>
       res.status(200).send({ response: users });
     })
     .catch(next);
+
+module.exports.buy = async (req, res, next) => {
+  const response = await albumsService.buy(req.params.id);
+  res.status(200).send({ album: response.dataValues });
+};
