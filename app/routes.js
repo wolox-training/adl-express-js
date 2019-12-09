@@ -21,6 +21,7 @@ exports.init = app => {
     [authenticationMiddleware.validateAdmin, credentialsMiddleware.validate],
     adminController.signUp
   );
+
   app.get('/users', [authenticationMiddleware.validate], usersController.index);
   app.post('/albums/:id', [authenticationMiddleware.validate], usersController.buy);
 };
