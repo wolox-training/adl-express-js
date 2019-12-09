@@ -1,3 +1,5 @@
+const constants = require('../../lib/constants');
+
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     'user',
@@ -10,7 +12,10 @@ module.exports = (sequelize, DataTypes) => {
       type: {
         type: DataTypes.STRING,
         allowNull: false,
-        defaultValue: 'user'
+        defaultValue: constants.user_types.USER,
+        validate: {
+          isIn: [[constants.user_types.ADMIN, constants.user_types.USER]]
+        }
       }
     },
     {

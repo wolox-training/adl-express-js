@@ -9,15 +9,15 @@ const { factoryAllModels } = require('../factory/factory_by_models');
 factoryAllModels();
 
 const request = supertest(app);
-const userAttributes = (firstName, lastName, email, password) => ({
-  firstName,
-  lastName,
+const userAttributes = (first_name, last_name, email, password) => ({
+  first_name,
+  last_name,
   email,
   password
 });
 
-const createUser = (firstName, lastName, email, password) =>
-  factory.create('user', userAttributes(firstName, lastName, email, bcrypt.hashSync(password, 10)));
+const createUser = (first_name, last_name, email, password) =>
+  factory.create('user', userAttributes(first_name, last_name, email, bcrypt.hashSync(password, 10)));
 
 const createAndSignInUser = () =>
   createUser('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923').then(() =>

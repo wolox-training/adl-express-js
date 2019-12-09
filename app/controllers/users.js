@@ -7,8 +7,8 @@ module.exports.signUp = (req, res, next) =>
   usersService
     .signUp(req.body)
     .then(() => {
-      logger.info(`Created user: ${JSON.stringify(req.body.firstName)}`);
-      return res.status(201).send({ firstName: req.body.firstName });
+      logger.info(`Created user: ${JSON.stringify(req.body.first_name)}`);
+      return res.status(201).send({ firstName: req.body.first_name });
     })
     .catch(next);
 
