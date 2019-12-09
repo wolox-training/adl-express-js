@@ -131,27 +131,14 @@ describe('usersController.users', () => {
 });
 
 describe('usersController.buy', () => {
-  /* it.only('Buys one album', () =>
-    createAndSignInUser().then(token =>
-      request
-        .post('/albums/4')
-        .set('token', token)
-        .send({ id: 4 })
-        .then(response => {
-          debugger;
-          expect(response.body.internal_code).toBe('invalid_token');
-        })
-    ));*/
-
-  it.only('Buys one album', async () => {
+  it('Buys one album', async () => {
     const token = await createAndSignInUser();
     const response = await request
       .post('/albums/4')
       .set('token', token)
       .send({ id: 4 });
 
-    const count = await models.album.count({});
-
-    expect(count).toBe(1);
+    const ua = await models.userAlbums.findOne({ where: { albumId: response.body.album.id } });
+    expect(ua.dataValues.albumId).toBe(response.body.album.id);
   });
 });

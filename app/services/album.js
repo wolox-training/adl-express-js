@@ -27,8 +27,12 @@ exports.photos = albumId =>
       throw errors.externalApiError('Error in external API');
     });
 
-exports.buy = async albumId => {
+exports.buy = async (albumId, currentUser) => {
   const response = await axios.get(`${apiUrl}/albums/${albumId}`);
-  const newAlbum = await models.album.create({ title: response.data.title });
+  const newAlbum = await models.album.create({
+    title: response.data.title,
+    userId: currentUser.dataValues.id
+  });
+  await currentUser.addAlbums(newAlbum);
   return newAlbum;
 };

@@ -30,6 +30,11 @@ module.exports.index = (req, res, next) =>
     .catch(next);
 
 module.exports.buy = async (req, res, next) => {
-  const response = await albumsService.buy(req.params.id);
-  res.status(200).send({ album: response.dataValues });
+  try {
+    const currentUser = await req.currentUser;
+    const response = await albumsService.buy(req.params.id, currentUser);
+    res.status(200).send({ album: response.dataValues });
+  } catch (e) {
+    return next;
+  }
 };
