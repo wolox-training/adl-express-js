@@ -16,11 +16,11 @@ const userAttributes = (firstName, lastName, email, password) => ({
   password
 });
 
-const createUser = (firstName, email, password) =>
-  factory.create('user', { firstName, email, password: bcrypt.hashSync(password, 10) });
+const createUser = (firstName, lastName, email, password) =>
+  factory.create('user', userAttributes(firstName, lastName, email, bcrypt.hashSync(password, 10)));
 
 const createAndSignInUser = () =>
-  createUser('Omar', 'omar.rodriguez@wolox.com', 'password1923').then(() =>
+  createUser('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923').then(() =>
     request
       .post('/users/sessions')
       .send({ email: 'omar.rodriguez@wolox.com', password: 'password1923' })
@@ -50,13 +50,11 @@ describe('usersController.signUp', () => {
       ));
 
   it('Try to create a existing user and fails', () =>
-    createUser('Omar', 'omar.rodriguez@wolox.com', 'password1923').then(() =>
+    createUser('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923').then(() =>
       request
         .post('/users')
         .send(userAttributes('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923'))
-        .then(response => {
-          expect(response.body.internal_code).toBe('email_already_in_use');
-        })
+        .then(response => expect(response.body.internal_code).toBe('email_already_in_use'))
     ));
 
   it('Try to create a user with invalid email and fails', () =>
@@ -77,7 +75,7 @@ describe('usersController.signUp', () => {
 });
 
 describe('usersController.createUserSignIn', () => {
-  beforeEach(() => createUser('Omar', 'omar.rodriguez@wolox.com', 'password1923'));
+  beforeEach(() => createUser('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923'));
 
   it('Log in with previously created user', () =>
     request

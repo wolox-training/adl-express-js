@@ -21,5 +21,6 @@ exports.init = app => {
     [authenticationMiddleware.validateAdmin, credentialsMiddleware.validate],
     adminController.signUp
   );
+
   app.get('/users', [authenticationMiddleware.validate], usersController.index);
 };
