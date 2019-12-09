@@ -10,8 +10,8 @@ module.exports.signUp = body =>
     }
     return models.user
       .create({
-        firstName: body.firstName,
-        lastName: body.lastName,
+        firstName: body.first_name,
+        lastName: body.last_name,
         email: body.email,
         password: generatePassword.hashPassword(body.password),
         type: 'admin'
