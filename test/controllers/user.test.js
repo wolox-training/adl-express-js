@@ -131,12 +131,17 @@ describe('usersController.users', () => {
 describe('usersController.buy', () => {
   it('Buys one album', async () => {
     const token = await createAndSignInUser();
-    const response = await request
-      .post('/albums/4')
-      .set('token', token)
-      .send({ id: 4 });
+    const response = await request.post('/albums/4').set('token', token);
 
     const ua = await models.userAlbums.findOne({ where: { albumId: response.body.album.id } });
     expect(ua.dataValues.albumId).toBe(response.body.album.id);
+  });
+
+  it('Tries to buy the same album and fails', async () => {
+    const token = await createAndSignInUser();
+    await request.post('/albums/4').set('token', token);
+    const response = await request.post('/albums/4').set('token', token);
+
+    expect(response.body.message).toBe('album bought!');
   });
 });

@@ -28,11 +28,27 @@ exports.photos = albumId =>
     });
 
 exports.buy = async (albumId, currentUser) => {
-  const response = await axios.get(`${apiUrl}/albums/${albumId}`);
-  const newAlbum = await models.album.create({
-    title: response.data.title,
-    userId: currentUser.dataValues.id
-  });
-  await currentUser.addAlbums(newAlbum);
-  return newAlbum;
+  try {
+    const response = await axios.get(`${apiUrl}/albums/${albumId}`);
+    let album = await models.album.findOne({ where: { title: response.data.title } });
+    if (!album) {
+      album = await models.album.create({
+        title: response.data.title,
+        userId: currentUser.dataValues.id
+      });
+    }
+    const boughtAlbum = await models.userAlbums.findOne({
+      where: { albumId: album.id, userId: currentUser.id }
+    });
+
+    if (boughtAlbum) {
+      throw errors.defaultError('album bought!');
+    }
+
+    await currentUser.addAlbums(album);
+
+    return album;
+  } catch (error) {
+    throw error;
+  }
 };

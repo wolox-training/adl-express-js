@@ -35,13 +35,13 @@ module.exports.buy = async (req, res, next) => {
     const response = await albumsService.buy(req.params.id, currentUser);
     res.status(200).send({ album: response.dataValues });
   } catch (e) {
-    return next;
+    return next(e);
   }
 
   return next;
 };
 
-module.exports.signIn = (req, res, next) =>
+module.exports.signIn = (req, res, next) => {
   credentialsHelper
     .signIn(req.body)
     .then(token => {
@@ -49,3 +49,4 @@ module.exports.signIn = (req, res, next) =>
       res.status(200).send({ response: token });
     })
     .catch(next);
+};
