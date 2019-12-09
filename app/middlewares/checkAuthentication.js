@@ -1,6 +1,7 @@
 const jwt = require('jwt-simple');
 const errors = require('../errors');
 const models = require('../models/index');
+const constants = require('../../lib/constants');
 
 const decode = token => {
   try {
@@ -33,7 +34,7 @@ module.exports.validate = (req, res, next) => {
 module.exports.validateAdmin = (req, res, next) =>
   decode(req.headers.token)
     .then(user => {
-      if (user.type !== 'admin') {
+      if (user.type !== constants.user_types.ADMIN) {
         throw errors.invalidCredentials();
       }
       return next();

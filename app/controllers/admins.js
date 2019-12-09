@@ -1,7 +1,7 @@
 const logger = require('../logger');
 const adminsService = require('../services/admins');
 
-module.exports.signUp = (req, res, next) => {
+module.exports.signUp = (req, res, next) =>
   adminsService
     .signUp(req.body)
     .then(() => {
@@ -12,4 +12,3 @@ module.exports.signUp = (req, res, next) => {
       logger.error(`An error occurs: ${JSON.stringify(error)}`);
       return next;
     });
-};

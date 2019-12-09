@@ -9,11 +9,11 @@ factoryAllModels();
 
 const request = supertest(app);
 
-const createUser = (firstName, email, password) =>
-  factory.create('user', { firstName, email, password: bcrypt.hashSync(password, 10), type: 'user' });
+const createUser = (first_name, email, password) =>
+  factory.create('user', { first_name, email, password: bcrypt.hashSync(password, 10), type: 'USER' });
 
-const createAdminUser = (firstName, email, password) =>
-  factory.create('user', { firstName, email, password: bcrypt.hashSync(password, 10), type: 'admin' });
+const createAdminUser = (first_name, email, password) =>
+  factory.create('user', { first_name, email, password: bcrypt.hashSync(password, 10), type: 'ADMIN' });
 
 describe('adminsController.signUp', () => {
   it('creates one admin and one common user and updates common user to admin', () =>
@@ -27,13 +27,12 @@ describe('adminsController.signUp', () => {
               .post('/admin/users')
               .set('token', signInResponse.body.response)
               .send({
-                firstName: 'Carlos',
                 email: 'carlos.quiroga@wolox.com',
                 password: 'password1923'
               })
               .then(() =>
                 models.user.findOne({ where: { email: 'carlos.quiroga@wolox.com' } }).then(user => {
-                  expect(user.type).toBe('admin');
+                  expect(user.type).toBe('ADMIN');
                 })
               )
           )
