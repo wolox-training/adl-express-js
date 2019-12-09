@@ -144,4 +144,9 @@ describe('usersController.buy', () => {
 
     expect(response.body.internal_code).toBe('album_already_purchased');
   });
+
+  it('Tries to buy an album without login and fails', async () => {
+    const response = await request.post('/albums/4').set('token', 'no-valid-token');
+    expect(response.body.internal_code).toBe('invalid_token');
+  });
 });
