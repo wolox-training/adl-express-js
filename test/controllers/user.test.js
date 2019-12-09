@@ -142,6 +142,6 @@ describe('usersController.buy', () => {
     await request.post('/albums/4').set('token', token);
     const response = await request.post('/albums/4').set('token', token);
 
-    expect(response.body.message).toBe('album bought!');
+    expect(response.body.internal_code).toBe('album_already_purchased');
   });
 });

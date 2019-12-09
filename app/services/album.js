@@ -42,13 +42,14 @@ exports.buy = async (albumId, currentUser) => {
     });
 
     if (boughtAlbum) {
-      throw errors.defaultError('album bought!');
+      throw errors.albumPurchased();
     }
 
     await currentUser.addAlbums(album);
 
     return album;
   } catch (error) {
+    logger.error(`An error occurs in database: ${JSON.stringify(error)}`);
     throw error;
   }
 };
