@@ -2,6 +2,7 @@ const logger = require('../logger');
 const usersService = require('../services/users');
 const albumsService = require('../services/album');
 const credentialsHelper = require('../services/validateCredentials');
+const albumsSerializers = require('../serializers/albums');
 
 module.exports.signUp = (req, res, next) =>
   usersService
@@ -34,7 +35,7 @@ module.exports.buy = async (req, res, next) => {
     const currentUser = await req.currentUser;
     const response = await albumsService.buy(req.params.id, currentUser);
     logger.info(`Album purchased: ${JSON.stringify(response.dataValues.title)}`);
-    return res.status(200).send({ album: response.dataValues });
+    return res.status(201).send({ album: response.dataValues });
   } catch (error) {
     return next(error);
   }
@@ -51,5 +52,10 @@ module.exports.signIn = (req, res, next) => {
 };
 
 module.exports.listAlbums = async (req, res, next) => {
-  await albumsService.listAlbums(req.params.userId);
+  try {
+    const albumsArray = await albumsService.listAlbums(req.params.userId);
+    return res.status(200).send({ userAlbums: albumsSerializers.albums(albumsArray) });
+  } catch (error) {
+    return next(error);
+  }
 };
