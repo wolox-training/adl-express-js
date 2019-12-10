@@ -53,3 +53,18 @@ exports.buy = async (albumId, currentUser) => {
     throw error;
   }
 };
+
+exports.listAlbums = async userId => {
+  const albumesComprados = await models.album.findAll({
+    include: [
+      {
+        model: models.user,
+        attributes: ['id'],
+        through: { where: { id: userId } },
+        as: 'users'
+      }
+    ]
+  });
+
+  console.log(albumesComprados);
+};

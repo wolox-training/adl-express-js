@@ -49,3 +49,7 @@ module.exports.signIn = (req, res, next) => {
     })
     .catch(next);
 };
+
+module.exports.listAlbums = async (req, res, next) => {
+  await albumsService.listAlbums(req.params.userId);
+};
