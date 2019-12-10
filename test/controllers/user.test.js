@@ -5,6 +5,9 @@ const bcrypt = require('bcrypt');
 const models = require('../../app/models/index');
 const app = require('../../app');
 const { factoryAllModels } = require('../factory/factory_by_models');
+const config = require('../../config');
+
+const { secret_key } = config.common.api;
 
 factoryAllModels();
 
@@ -148,5 +151,17 @@ describe('usersController.buy', () => {
   it('Tries to buy an album without login and fails', async () => {
     const response = await request.post('/albums/4').set('token', 'no-valid-token');
     expect(response.body.internal_code).toBe('invalid_token');
+  });
+
+  it('Returns all albums', async () => {
+    const albums = await factory.createMany('album', 3);
+    const token = await createAndSignInUser();
+    const currentUser = await models.user.findOne({
+      where: { email: jwt.decode(token, secret_key) }
+    });
+    await currentUser.addAlbums(albums);
+    const response = await request.get(`/users/${currentUser.id}/albums`).set('token', token);
+
+    expect(response.body.userAlbums.albums.length).toBe(3);
   });
 });
