@@ -152,7 +152,9 @@ describe('usersController.buy', () => {
     const response = await request.post('/albums/4').set('token', 'no-valid-token');
     expect(response.body.internal_code).toBe('invalid_token');
   });
+});
 
+describe('usersController.listAlbums', () => {
   it('Returns all albums', async () => {
     const albums = await factory.createMany('album', 3);
     const token = await createAndSignInUser();
