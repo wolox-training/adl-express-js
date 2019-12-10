@@ -69,6 +69,7 @@ exports.listAlbums = async userId => {
 
     return userAlbums;
   } catch (error) {
+    logger.error(`An error occurs in database: ${JSON.stringify(error)}`);
     throw errors.databaseError(error);
   }
 };
