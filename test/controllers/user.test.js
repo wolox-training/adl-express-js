@@ -166,4 +166,16 @@ describe('usersController.listAlbums', () => {
 
     expect(response.body.userAlbums.albums.length).toBe(3);
   });
+
+  it('Tries to get albums of another user and fails', async () => {
+    const albums = await factory.createMany('album', 3);
+    const token = await createUser('Dante', 'Farias', 'dante.farias@wolox.com', 'password1923');
+    const currentUser = await models.user.findOne({
+      where: { email: jwt.decode(token, secret_key) }
+    });
+    await currentUser.addAlbums(albums);
+    const response = await request.get(`/users/${currentUser.id}/albums`).set('token', token);
+
+    expect(response.body.userAlbums.albums.length).toBe(3);
+  });
 });

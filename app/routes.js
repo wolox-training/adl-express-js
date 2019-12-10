@@ -6,6 +6,7 @@ const usersController = require('./controllers/users');
 const adminController = require('./controllers/admins');
 const credentialsMiddleware = require('./middlewares/credentialsValidator');
 const authenticationMiddleware = require('./middlewares/checkAuthentication');
+const authorizationMiddleware = require('./middlewares/checkAuthorization');
 
 exports.init = app => {
   app.get('/health', healthCheck);
@@ -24,5 +25,9 @@ exports.init = app => {
 
   app.get('/users', [authenticationMiddleware.validate], usersController.index);
   app.post('/albums/:id', [authenticationMiddleware.validate], usersController.buy);
-  app.get('/users/:userId/albums', [authenticationMiddleware.validate], usersController.listAlbums);
+  app.get(
+    '/users/:userId/albums',
+    [authenticationMiddleware.validate, authorizationMiddleware.ownerAdmin],
+    usersController.listAlbums
+  );
 };
