@@ -59,3 +59,5 @@ module.exports.listAlbums = async (req, res, next) => {
     return next(error);
   }
 };
+
+module.exports.invalidateAll = async (req, res, next) => {};
