@@ -30,9 +30,9 @@ exports.init = app => {
     [authenticationMiddleware.validate, authorizationMiddleware.ownerAdmin],
     usersController.listAlbums
   );
-  app.post(
+  /* app.post(
     '/users/sessions/invalidate_all',
     [authenticationMiddleware.validate],
     usersController.invalidateAll
-  );
+  );*/
 };

@@ -86,7 +86,9 @@ describe('usersController.createUserSignIn', () => {
       .post('/users/sessions')
       .send({ email: 'omar.rodriguez@wolox.com', password: 'password1923' })
       .then(response => {
-        expect(jwt.decode(response.body.response, process.env.SECRET_KEY)).toBe('omar.rodriguez@wolox.com');
+        expect(jwt.decode(response.body.response, process.env.SECRET_KEY).email).toBe(
+          'omar.rodriguez@wolox.com'
+        );
       }));
 
   it('Tries to log in with correct email but invalid password and fails ', () =>
@@ -160,7 +162,7 @@ describe('usersController.listAlbums', () => {
     const albums = await factory.createMany('album', 3);
     const token = await createAndSignInUser();
     const currentUser = await models.user.findOne({
-      where: { email: jwt.decode(token, secret_key) }
+      where: { email: jwt.decode(token, secret_key).email }
     });
     await currentUser.addAlbums(albums);
     const response = await request.get(`/users/${currentUser.id}/albums`).set('token', token);
@@ -183,7 +185,7 @@ describe('usersController.listAlbums', () => {
     const owner = await createUser('Dante', 'Farias', 'dante.farias@wolox.com', 'password1923');
     await owner.addAlbums(albums);
     const currentUser = await models.user.findOne({
-      where: { email: jwt.decode(token, secret_key) }
+      where: { email: jwt.decode(token, secret_key).email }
     });
     await currentUser.update({ type: constants.user_types.ADMIN });
     const response = await request.get(`/users/${owner.id}/albums`).set('token', token);

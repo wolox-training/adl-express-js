@@ -42,14 +42,5 @@ module.exports.signIn = body =>
         throw errors.invalidCredentials('Invalid credentials, please try again');
       }
 
-      return models.token.findOne({ where: { user_id: user.id } }).then(previousToken => {
-        if (previousToken) {
-          return previousToken.destroy();
-        }
-
-        return models.token.create({ user_id: user.id }).then(token => {
-          const tokenArray = { tokenId: token.id, email: user.email };
-          return jwt.encode(tokenArray, process.env.SECRET_KEY);
-        });
-      });
+      return jwt.encode(user.email, process.env.SECRET_KEY);
     });

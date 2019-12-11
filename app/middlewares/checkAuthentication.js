@@ -11,7 +11,7 @@ const decode = token => {
     const result = jwt.decode(token, secret_key);
     return models.user
       .findOne({
-        where: { email: result }
+        where: { email: result.email }
       })
       .then(user => {
         if (!user) {
