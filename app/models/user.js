@@ -30,6 +30,8 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'userId',
       otherKey: 'albumId'
     });
+
+    User.hasOne(models.token);
   };
 
   return User;
