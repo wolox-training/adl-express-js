@@ -17,22 +17,29 @@ const decode = token => {
         if (!user) {
           throw errors.invalidToken();
         }
-        return user;
+
+        return models.session.findOne({ where: { userId: 1 } }).then(session => {
+          if (!session || session.id !== result.token) {
+            // debugger;
+            throw errors.invalidCredentials();
+          }
+          return user;
+        });
       });
   } catch (e) {
     throw errors.invalidToken();
   }
 };
 
-module.exports.validate = (req, res, next) => {
+module.exports.validate = async (req, res, next) => {
   try {
-    const user = decode(req.headers.token);
+    const user = await decode(req.headers.token);
     req.currentUser = user;
+    // debugger;
+    return next();
   } catch (e) {
     throw errors.invalidToken();
   }
-
-  return next();
 };
 
 module.exports.validateAdmin = (req, res, next) =>

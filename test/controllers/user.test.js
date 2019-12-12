@@ -195,14 +195,23 @@ describe('usersController.listAlbums', () => {
 });
 
 describe('usersController.invalidateAll', () => {
-  it('Tries to get albums of another user being admin and success', async () => {
+  it.only('Tries to get albums of another user being admin and success', async () => {
+    // debugger;
     const token = await createAndSignInUser();
-    const currentUser = await models.user.findOne({
-      where: { email: jwt.decode(token, secret_key).email }
-    });
-    const currentSession = await models.session.findOne({ where: { userId: currentUser.id } });
+    // const currentUser = await models.user.findOne({
+    //  where: { email: jwt.decode(token, secret_key).email }
+    // });
+    // const currentSession = await models.session.findOne({ where: { userId: currentUser.id } });
+    // debugger;
     await request.post('/users/sessions/invalidate_all').set('token', token);
+    // debugger;
+    // await models.session.findOne({ where: { userId: currentUser.id } });
+    const response = await request
+      .get('/users')
+      .set('token', token)
+      .send({});
 
-    expect(currentSession.id).toBe(1);
+    // debugger;
+    expect(response).toBe(1);
   });
 });
