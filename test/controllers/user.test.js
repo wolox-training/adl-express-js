@@ -201,7 +201,6 @@ describe('usersController.invalidateAll', () => {
       where: { email: jwt.decode(token, secret_key).email }
     });
     const currentSession = await models.session.findOne({ where: { userId: currentUser.id } });
-    debugger;
     await request.post('/users/sessions/invalidate_all').set('token', token);
 
     expect(currentSession.id).toBe(1);
