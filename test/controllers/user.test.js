@@ -193,3 +193,5 @@ describe('usersController.listAlbums', () => {
     expect(response.body.userAlbums.albums.length).toBe(3);
   });
 });
+
+// describe('usersController.invalidateAll', () => {}

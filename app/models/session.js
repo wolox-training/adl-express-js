@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const Token = sequelize.define(
-    'token',
+  const Session = sequelize.define(
+    'session',
     {
       id: { type: DataTypes.INTEGER, allowNull: false, autoIncrement: true, primaryKey: true, unique: true },
       userId: { allowNull: false, type: DataTypes.INTEGER, field: 'user_id', primaryKey: true }
@@ -10,9 +10,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  Token.associate = models => {
-    Token.belongsTo(models.user);
+  Session.associate = models => {
+    Session.belongsTo(models.user);
   };
 
-  return Token;
+  return Session;
 };

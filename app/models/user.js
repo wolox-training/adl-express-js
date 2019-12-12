@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       otherKey: 'albumId'
     });
 
-    User.hasOne(models.token);
+    User.hasOne(models.session);
   };
 
   return User;
