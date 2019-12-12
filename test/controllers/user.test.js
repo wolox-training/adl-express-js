@@ -195,7 +195,7 @@ describe('usersController.listAlbums', () => {
 });
 
 describe('usersController.invalidateAll', () => {
-  it.only('Tries to get albums of another user being admin and success', async () => {
+  it('Tries to get albums of another user being admin and success', async () => {
     const token = await createAndSignInUser();
     const currentUser = await models.user.findOne({
       where: { email: jwt.decode(token, secret_key).email }
