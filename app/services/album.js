@@ -27,7 +27,7 @@ exports.photos = albumId =>
       throw errors.externalApiError('Error in external API');
     });
 
-exports.buy = async (albumId, currentUser) => {
+exports.buyAlbum = async (albumId, currentUser) => {
   try {
     const response = await axios.get(`${apiUrl}/albums/${albumId}`);
     let album = await models.album.findOne({ where: { title: response.data.title } });
