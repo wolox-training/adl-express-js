@@ -195,14 +195,15 @@ describe('usersController.listAlbums', () => {
 });
 
 describe('usersController.invalidateAll', () => {
-  it('Tries to get albums of another user being admin and success', async () => {
+  it("Invalidates all user's sessions and fails when tries to get some protected resource", async () => {
     const token = await createAndSignInUser();
     const currentUser = await models.user.findOne({
       where: { email: jwt.decode(token, secret_key).email }
     });
-    const currentSession = await models.session.findOne({ where: { userId: currentUser.id } });
+    await models.session.findOne({ where: { userId: currentUser.id } });
     await request.post('/users/sessions/invalidate_all').set('token', token);
+    const response = await request.get(`/users/${currentUser.id}/albums`).set('token', token);
 
-    expect(currentSession.id).toBe(1);
+    expect(response.body.internal_code).toBe('invalid_token');
   });
 });

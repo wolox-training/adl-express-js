@@ -3,6 +3,7 @@ const errors = require('../errors');
 const models = require('../models/index');
 const constants = require('../../lib/constants');
 const config = require('../../config');
+const logger = require('../logger');
 
 const { secret_key } = config.common.api;
 
@@ -17,22 +18,31 @@ const decode = token => {
         if (!user) {
           throw errors.invalidToken();
         }
-        return user;
+
+        return models.session.findOne({ where: { userId: user.id } }).then(session => {
+          if (!session || session.id !== result.token) {
+            throw errors.invalidToken();
+          }
+          return user;
+        });
+      })
+      .catch(() => {
+        throw errors.invalidToken();
       });
   } catch (e) {
     throw errors.invalidToken();
   }
 };
 
-module.exports.validate = (req, res, next) => {
+module.exports.validate = async (req, res, next) => {
   try {
-    const user = decode(req.headers.token);
+    const user = await decode(req.headers.token);
     req.currentUser = user;
-  } catch (e) {
-    throw errors.invalidToken();
+    return next();
+  } catch (error) {
+    logger.error(`An error occurs: ${JSON.stringify(error)}`);
+    return next(error);
   }
-
-  return next();
 };
 
 module.exports.validateAdmin = (req, res, next) =>
