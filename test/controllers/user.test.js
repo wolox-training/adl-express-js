@@ -200,7 +200,6 @@ describe('usersController.invalidateAll', () => {
     const currentUser = await models.user.findOne({
       where: { email: jwt.decode(token, secret_key).email }
     });
-    await models.session.findOne({ where: { userId: currentUser.id } });
     await request.post('/users/sessions/invalidate_all').set('token', token);
     const response = await request.get(`/users/${currentUser.id}/albums`).set('token', token);
 
