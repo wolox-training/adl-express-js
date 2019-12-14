@@ -31,9 +31,11 @@ exports.buyAlbum = async (albumId, currentUser) => {
   const response = await axios.get(`${apiUrl}/albums/${albumId}`).catch(() => {
     throw errors.databaseError();
   });
+
   let album = await models.album.findOne({ where: { title: response.data.title } }).catch(() => {
     throw errors.databaseError();
   });
+
   if (!album) {
     album = await models.album
       .create({
@@ -44,6 +46,7 @@ exports.buyAlbum = async (albumId, currentUser) => {
         throw errors.databaseError();
       });
   }
+
   const boughtAlbum = await models.userAlbums
     .findOne({
       where: { albumId: album.id, userId: currentUser.id }
@@ -56,7 +59,7 @@ exports.buyAlbum = async (albumId, currentUser) => {
     throw errors.albumPurchased();
   }
 
-  await currentUser.addAlbums(album).catch(() => {
+  await currentUser.addAlbum(album).catch(() => {
     throw errors.databaseError();
   });
 
