@@ -31,7 +31,6 @@ exports.buyAlbum = async (albumId, currentUser) => {
   const response = await axios.get(`${apiUrl}/albums/${albumId}`).catch(() => {
     throw errors.databaseError();
   });
-
   let album = await models.album.findOne({ where: { title: response.data.title } }).catch(() => {
     throw errors.databaseError();
   });

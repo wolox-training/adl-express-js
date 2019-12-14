@@ -2,9 +2,12 @@ const supertest = require('supertest');
 const jwt = require('jwt-simple');
 const { factory } = require('factory-girl');
 const bcrypt = require('bcrypt');
+const axios = require('axios');
 const models = require('../../app/models/index');
 const app = require('../../app');
 const { factoryAllModels } = require('../factory/factory_by_models');
+
+jest.mock('axios');
 
 factoryAllModels();
 
@@ -128,8 +131,17 @@ describe('usersController.users', () => {
     ));
 });
 
-describe('usersController.buy', () => {
+describe('usersController.buyAlbum', () => {
+  const data = {
+    data: {
+      userId: 1,
+      id: 4,
+      title: 'non esse culpa molestiae omnis sed optio'
+    }
+  };
+
   it('Buys one album', async () => {
+    axios.get.mockImplementationOnce(() => Promise.resolve(data));
     const token = await createAndSignInUser();
     const response = await request.post('/albums/4').set('token', token);
 
@@ -139,13 +151,17 @@ describe('usersController.buy', () => {
 
   it('Tries to buy the same album and fails', async () => {
     const token = await createAndSignInUser();
+
+    axios.get.mockImplementation(() => Promise.resolve(data));
     await request.post('/albums/4').set('token', token);
+
     const response = await request.post('/albums/4').set('token', token);
 
     expect(response.body.internal_code).toBe('album_already_purchased');
   });
 
   it('Tries to buy an album without login and fails', async () => {
+    axios.get.mockImplementationOnce(() => Promise.resolve(data));
     const response = await request.post('/albums/4').set('token', 'no-valid-token');
     expect(response.body.internal_code).toBe('invalid_token');
   });
