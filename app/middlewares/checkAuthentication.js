@@ -20,7 +20,7 @@ const decode = token => {
         }
 
         return models.session.findOne({ where: { userId: user.id } }).then(session => {
-          if (!session || session.id !== result.token) {
+          if (!session || session.id !== result.token || result.expireTime < new Date()) {
             throw errors.invalidToken();
           }
           return user;

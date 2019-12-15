@@ -1,5 +1,3 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jwt-simple');
 const models = require('../models/index');
 const errors = require('../errors');
 const config = require('../../config');
@@ -31,28 +29,3 @@ module.exports.index = page =>
     logger.error(error);
     throw error;
   });
-
-module.exports.signIn = body =>
-  models.user
-    .findOne({
-      where: { email: body.email }
-    })
-    .then(user => {
-      if (!user || !bcrypt.compareSync(body.password, user.password)) {
-        throw errors.invalidCredentials('Invalid credentials, please try again');
-      }
-
-      return models.session.findOne({ where: { user_id: user.id } }).then(previousSession => {
-        if (previousSession) {
-          return previousSession.destroy();
-        }
-
-        return models.session.create({ user_id: user.id }).then(session => {
-          const current = new Date();
-          const expireTime = current.setSeconds(current.getSeconds() + 2);
-          const tokenArray = { sessionId: session.id, email: user.email, expireTime };
-
-          return jwt.encode(tokenArray, process.env.SECRET_KEY);
-        });
-      });
-    });

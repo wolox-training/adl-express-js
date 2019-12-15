@@ -25,7 +25,7 @@ describe('adminsController.signUp', () => {
           .then(signInResponse =>
             request
               .post('/admin/users')
-              .set('token', signInResponse.body.response)
+              .set('token', signInResponse.body.response.token)
               .send({
                 email: 'carlos.quiroga@wolox.com',
                 password: 'password1923'
@@ -48,7 +48,7 @@ describe('adminsController.signUp', () => {
           .then(signInResponse =>
             request
               .post('/admin/users')
-              .set('token', signInResponse.body.response)
+              .set('token', signInResponse.body.response.token)
               .send({
                 firstName: 'Carlos',
                 lastName: 'Quiroga',
@@ -71,7 +71,7 @@ describe('adminsController.signUp', () => {
           .then(signInResponse =>
             request
               .post('/admin/users')
-              .set('token', signInResponse.body.response)
+              .set('token', signInResponse.body.response.token)
               .send({
                 firstName: 'Carlos',
                 email: 'carlos.quiroga@wolox.com',

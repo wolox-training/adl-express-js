@@ -16,6 +16,8 @@ module.exports.signIn = async body => {
   }
 
   const newSession = await models.session.create({ userId: user.id });
-  const tokenArray = { token: newSession.id, email: user.email };
-  return jwt.encode(tokenArray, process.env.SECRET_KEY);
+  const current = new Date();
+  const expireTime = current.setSeconds(current.getSeconds() + 20);
+  const tokenArray = { token: newSession.id, email: user.email, expireTime };
+  return { token: jwt.encode(tokenArray, process.env.SECRET_KEY), expireTime };
 };

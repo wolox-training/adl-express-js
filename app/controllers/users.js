@@ -17,9 +17,9 @@ module.exports.signUp = (req, res, next) =>
 module.exports.signIn = (req, res, next) =>
   credentialsHelper
     .signIn(req.body)
-    .then(token => {
+    .then(response => {
       logger.info(`Sign in with user: ${JSON.stringify(req.body.email)}`);
-      res.status(200).send({ response: token });
+      res.status(200).send({ response: { token: response.token, expireTime: response.expireTime } });
     })
     .catch(next);
 
