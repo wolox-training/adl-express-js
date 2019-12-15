@@ -48,7 +48,10 @@ module.exports.signIn = body =>
         }
 
         return models.session.create({ user_id: user.id }).then(session => {
-          const tokenArray = { sessionId: session.id, email: user.email };
+          const current = new Date();
+          const expireTime = current.setSeconds(current.getSeconds() + 2);
+          const tokenArray = { sessionId: session.id, email: user.email, expireTime };
+
           return jwt.encode(tokenArray, process.env.SECRET_KEY);
         });
       });

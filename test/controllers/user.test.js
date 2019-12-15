@@ -167,6 +167,10 @@ describe('usersController.listAlbums', () => {
     await currentUser.addAlbums(albums);
     const response = await request.get(`/users/${currentUser.id}/albums`).set('token', token);
 
+    // const ahora = new Date();
+    // ahora.setSeconds(ahora.getSeconds() + 10)
+    // if (ahora < new Date()){return invalid_token};
+
     expect(response.body.userAlbums.albums.length).toBe(3);
   });
 
