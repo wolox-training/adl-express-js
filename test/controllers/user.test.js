@@ -8,7 +8,7 @@ const { factoryAllModels } = require('../factory/factory_by_models');
 const config = require('../../config');
 const constants = require('../../lib/constants');
 
-const { secret_key } = config.common.api;
+const SECRET_KEY = config.common.api.secretKey;
 
 factoryAllModels();
 
@@ -160,7 +160,7 @@ describe('usersController.listAlbums', () => {
     const albums = await factory.createMany('album', 3);
     const token = await createAndSignInUser();
     const currentUser = await models.user.findOne({
-      where: { email: jwt.decode(token, secret_key) }
+      where: { email: jwt.decode(token, SECRET_KEY) }
     });
     await currentUser.addAlbums(albums);
     const response = await request.get(`/users/${currentUser.id}/albums`).set('token', token);
@@ -183,7 +183,7 @@ describe('usersController.listAlbums', () => {
     const owner = await createUser('Dante', 'Farias', 'dante.farias@wolox.com', 'password1923');
     await owner.addAlbums(albums);
     const currentUser = await models.user.findOne({
-      where: { email: jwt.decode(token, secret_key) }
+      where: { email: jwt.decode(token, SECRET_KEY) }
     });
     await currentUser.update({ type: constants.user_types.ADMIN });
     const response = await request.get(`/users/${owner.id}/albums`).set('token', token);
