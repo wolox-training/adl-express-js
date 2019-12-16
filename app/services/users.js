@@ -42,12 +42,12 @@ module.exports.signIn = body =>
         throw errors.invalidCredentials('Invalid credentials, please try again');
       }
 
-      return models.session.findOne({ where: { user_id: user.id } }).then(previousSession => {
+      return models.session.findOne({ where: { userId: user.id } }).then(previousSession => {
         if (previousSession) {
           return previousSession.destroy();
         }
 
-        return models.session.create({ user_id: user.id }).then(session => {
+        return models.session.create({ userId: user.id }).then(session => {
           const tokenArray = { sessionId: session.id, email: user.email };
           return jwt.encode(tokenArray, process.env.SECRET_KEY);
         });

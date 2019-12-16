@@ -54,7 +54,6 @@ module.exports.listAlbums = async (req, res, next) => {
 module.exports.invalidate = async (req, res, next) => {
   try {
     const currentUser = await req.currentUser;
-    // debugger;
     await sessionsService.invalidate(currentUser);
     return res.status(200).send({ response: 'deleted_session' });
   } catch (error) {

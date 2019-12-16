@@ -89,9 +89,7 @@ describe('usersController.createUserSignIn', () => {
       .post('/users/sessions')
       .send({ email: 'omar.rodriguez@wolox.com', password: 'password1923' })
       .then(response => {
-        expect(jwt.decode(response.body.response, process.env.SECRET_KEY).email).toBe(
-          'omar.rodriguez@wolox.com'
-        );
+        expect(jwt.decode(response.body.response, SECRET_KEY).email).toBe('omar.rodriguez@wolox.com');
       }));
 
   it('Tries to log in with correct email but invalid password and fails ', () =>
