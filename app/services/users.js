@@ -44,12 +44,16 @@ module.exports.signIn = body =>
 
       return models.session.findOne({ where: { userId: user.id } }).then(previousSession => {
         if (previousSession) {
-          return previousSession.destroy();
+          return previousSession.destroy().catch(() => {
+            throw errors.databaseError('Could not destroy previous session');
+          });
         }
 
         return models.session.create({ userId: user.id }).then(session => {
           const tokenArray = { sessionId: session.id, email: user.email };
-          return jwt.encode(tokenArray, process.env.SECRET_KEY);
+          return jwt.encode(tokenArray, process.env.SECRET_KEY).catch(() => {
+            throw errors.databaseError('Could not return token successfully');
+          });
         });
       });
     });
