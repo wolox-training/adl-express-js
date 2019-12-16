@@ -29,7 +29,8 @@ const decode = token => {
       .catch(() => {
         throw errors.invalidToken();
       });
-  } catch (e) {
+  } catch (error) {
+    logger.error(`An error occurs with your authentication: ${JSON.stringify(error)}`);
     throw errors.invalidToken();
   }
 };
