@@ -161,7 +161,7 @@ describe('usersController.buy', () => {
 });
 
 describe('usersController.listAlbums', () => {
-  it.only('Returns its all albums', async () => {
+  it('Returns its all albums', async () => {
     const albums = await factory.createMany('album', 3);
     const signInResponse = await createAndSignInUser();
     const { token } = signInResponse;
@@ -169,8 +169,6 @@ describe('usersController.listAlbums', () => {
       where: { email: jwt.decode(token, secret_key).email }
     });
     await currentUser.addAlbums(albums);
-    // Se setea un parate de 3 segundos, para probar que el token ya expiró
-    await sleep(3000);
     const response = await request.get(`/users/${currentUser.id}/albums`).set('token', token);
     expect(response.body.userAlbums.albums.length).toBe(3);
   });
@@ -198,6 +196,22 @@ describe('usersController.listAlbums', () => {
     const response = await request.get(`/users/${owner.id}/albums`).set('token', token);
 
     expect(response.body.userAlbums.albums.length).toBe(3);
+  });
+
+  it('Tries to get albums with a expired token and fails', async () => {
+    const albums = await factory.createMany('album', 3);
+    const signInResponse = await createAndSignInUser();
+    const { token } = signInResponse;
+    const owner = await createUser('Dante', 'Farias', 'dante.farias@wolox.com', 'password1923');
+    await owner.addAlbums(albums);
+    const currentUser = await models.user.findOne({
+      where: { email: jwt.decode(token, secret_key).email }
+    });
+    await currentUser.update({ type: constants.user_types.ADMIN });
+    await sleep(4000);
+    const response = await request.get(`/users/${owner.id}/albums`).set('token', token);
+
+    expect(response.body.internal_code).toBe('invalid_token');
   });
 });
 

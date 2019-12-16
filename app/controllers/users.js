@@ -19,7 +19,9 @@ module.exports.signIn = (req, res, next) =>
     .signIn(req.body)
     .then(response => {
       logger.info(`Sign in with user: ${JSON.stringify(req.body.email)}`);
-      res.status(200).send({ response: { token: response.token, expireTime: response.expireTime } });
+      res
+        .status(200)
+        .send({ response: { token: response.token, expireTime: new Date(response.expireTime) } });
     })
     .catch(next);
 
