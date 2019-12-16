@@ -2,6 +2,9 @@ const bcrypt = require('bcrypt');
 const jwt = require('jwt-simple');
 const models = require('../models/index');
 const errors = require('../errors');
+const config = require('../../config');
+
+const { tokenExpiration } = config.common.api;
 
 module.exports.signIn = async body => {
   const user = await models.user.findOne({
@@ -17,7 +20,7 @@ module.exports.signIn = async body => {
 
   const newSession = await models.session.create({ userId: user.id });
   const current = new Date();
-  const expireTime = current.setSeconds(current.getSeconds() + 2);
+  const expireTime = current.setSeconds(current.getSeconds() + parseInt(tokenExpiration));
   const tokenArray = { token: newSession.id, email: user.email, expireTime };
   return { token: jwt.encode(tokenArray, process.env.SECRET_KEY), expireTime };
 };
