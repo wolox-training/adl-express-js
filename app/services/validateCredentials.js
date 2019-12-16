@@ -4,7 +4,7 @@ const models = require('../models/index');
 const errors = require('../errors');
 const config = require('../../config');
 
-const { tokenExpiration } = config.common.api;
+const TOKEN_EXPIRATION = config.common.api.tokenExpiration;
 
 module.exports.signIn = async body => {
   const user = await models.user
@@ -33,7 +33,7 @@ module.exports.signIn = async body => {
     throw errors.databaseError('Could not create a new session successfully');
   });
   const current = new Date();
-  const expireTime = current.setSeconds(current.getSeconds() + parseInt(tokenExpiration));
+  const expireTime = current.setSeconds(current.getSeconds() + parseInt(TOKEN_EXPIRATION));
   const tokenArray = { token: newSession.id, email: user.email, expireTime };
   try {
     return { token: jwt.encode(tokenArray, process.env.SECRET_KEY), expireTime };
