@@ -5,11 +5,11 @@ const constants = require('../../lib/constants');
 const config = require('../../config');
 const logger = require('../logger');
 
-const { secret_key } = config.common.api;
+const SECRET_KEY = config.common.api.secretKey;
 
 const decode = token => {
   try {
-    const result = jwt.decode(token, secret_key);
+    const result = jwt.decode(token, SECRET_KEY);
     return models.user
       .findOne({
         where: { email: result.email }
