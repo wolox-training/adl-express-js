@@ -12,9 +12,9 @@ jest.mock('axios');
 factoryAllModels();
 
 const request = supertest(app);
-const userAttributes = (first_name, last_name, email, password) => ({
-  first_name,
-  last_name,
+const userAttributes = (firstName, lastName, email, password) => ({
+  first_name: firstName,
+  last_name: lastName,
   email,
   password
 });
