@@ -1,7 +1,7 @@
 const models = require('../models/index');
 const logger = require('../logger');
 
-module.exports.invalidateAll = async currentUser => {
+module.exports.invalidate = async currentUser => {
   try {
     const currentSession = await models.session.findOne({ where: { userId: currentUser.id } });
     return await currentSession.destroy();

@@ -33,10 +33,10 @@ module.exports.index = (req, res, next) =>
     })
     .catch(next);
 
-module.exports.buy = async (req, res, next) => {
+module.exports.buyAlbum = async (req, res, next) => {
   try {
     const currentUser = await req.currentUser;
-    const response = await albumsService.buy(req.params.id, currentUser);
+    const response = await albumsService.buyAlbum(req.params.id, currentUser);
     logger.info(`Album purchased: ${JSON.stringify(response.dataValues.title)}`);
     return res.status(201).send({ album: response.dataValues });
   } catch (error) {
@@ -53,10 +53,10 @@ module.exports.listAlbums = async (req, res, next) => {
   }
 };
 
-module.exports.invalidateAll = async (req, res, next) => {
+module.exports.invalidate = async (req, res, next) => {
   try {
     const currentUser = await req.currentUser;
-    await sessionsService.invalidateAll(currentUser);
+    await sessionsService.invalidate(currentUser);
     return res.status(200).send({ response: 'deleted_session' });
   } catch (error) {
     return next(error);
