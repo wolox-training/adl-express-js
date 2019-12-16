@@ -4,12 +4,12 @@ module.exports = (sequelize, DataTypes) => {
     {
       id: { type: DataTypes.INTEGER, allowNull: false, autoIncrement: true, primaryKey: true, unique: true },
       userId: { allowNull: false, type: DataTypes.INTEGER, field: 'user_id', primaryKey: true },
-      paranoid: true,
-      timestamps: true,
       deletedAt: 'destroyTime'
     },
     {
-      underscored: true
+      underscored: true,
+      paranoid: true,
+      timestamps: true
     }
   );
 
