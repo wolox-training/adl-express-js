@@ -2,6 +2,7 @@ const supertest = require('supertest');
 const jwt = require('jwt-simple');
 const { factory } = require('factory-girl');
 const bcrypt = require('bcrypt');
+const axios = require('axios');
 const models = require('../../app/models/index');
 const app = require('../../app');
 const { factoryAllModels } = require('../factory/factory_by_models');
@@ -10,12 +11,14 @@ const constants = require('../../lib/constants');
 
 const SECRET_KEY = config.common.api.secretKey;
 
+jest.mock('axios');
+
 factoryAllModels();
 
 const request = supertest(app);
-const userAttributes = (first_name, last_name, email, password) => ({
-  first_name,
-  last_name,
+const userAttributes = (firstName, lastName, email, password) => ({
+  first_name: firstName,
+  last_name: lastName,
   email,
   password
 });
@@ -132,12 +135,21 @@ describe('usersController.users', () => {
     ));
 });
 
-describe('usersController.buy', () => {
+describe('usersController.buyAlbum', () => {
+  const data = {
+    data: {
+      userId: 1,
+      id: 4,
+      title: 'non esse culpa molestiae omnis sed optio'
+    }
+  };
+  beforeEach(() => axios.get.mockImplementation(() => Promise.resolve(data)));
+
   it('Buys one album', async () => {
     const token = await createAndSignInUser();
     const response = await request.post('/albums/4').set('token', token);
-
     const ua = await models.userAlbums.findOne({ where: { albumId: response.body.album.id } });
+
     expect(ua.dataValues.albumId).toBe(response.body.album.id);
   });
 
@@ -151,6 +163,7 @@ describe('usersController.buy', () => {
 
   it('Tries to buy an album without login and fails', async () => {
     const response = await request.post('/albums/4').set('token', 'no-valid-token');
+
     expect(response.body.internal_code).toBe('invalid_token');
   });
 });

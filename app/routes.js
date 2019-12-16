@@ -24,10 +24,10 @@ exports.init = app => {
   );
 
   app.get('/users', [authenticationMiddleware.validate], usersController.index);
-  app.post('/albums/:id', [authenticationMiddleware.validate], usersController.buy);
   app.get(
     '/users/:userId/albums',
     [authenticationMiddleware.validate, authorizationMiddleware.ownerAdmin],
     usersController.listAlbums
   );
+  app.post('/albums/:id', [authenticationMiddleware.validate], usersController.buyAlbum);
 };
