@@ -194,7 +194,7 @@ describe('usersController.listAlbums', () => {
   });
 });
 
-describe('usersController.invalidateAll', () => {
+describe('usersController.invalidate', () => {
   it("Invalidates all user's sessions and fails when tries to get some protected resource", async () => {
     const token = await createAndSignInUser();
     const currentUser = await models.user.findOne({
