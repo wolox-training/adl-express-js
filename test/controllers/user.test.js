@@ -10,8 +10,8 @@ factoryAllModels();
 
 const request = supertest(app);
 const userAttributes = (firstName, lastName, email, password) => ({
-  firstName,
-  lastName,
+  first_name: firstName,
+  last_name: lastName,
   email,
   password
 });
