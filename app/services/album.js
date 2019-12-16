@@ -29,10 +29,10 @@ exports.photos = albumId =>
 
 exports.buyAlbum = async (albumId, currentUser) => {
   const response = await axios.get(`${apiUrl}/albums/${albumId}`).catch(() => {
-    throw errors.databaseError();
+    throw errors.externalApiError('Error in external API');
   });
   let album = await models.album.findOne({ where: { title: response.data.title } }).catch(() => {
-    throw errors.databaseError();
+    throw errors.databaseError('Cannot find any album');
   });
 
   if (!album) {
@@ -42,7 +42,7 @@ exports.buyAlbum = async (albumId, currentUser) => {
         userId: currentUser.dataValues.id
       })
       .catch(() => {
-        throw errors.databaseError();
+        throw errors.databaseError('Cannot create album');
       });
   }
 
@@ -51,7 +51,7 @@ exports.buyAlbum = async (albumId, currentUser) => {
       where: { albumId: album.id, userId: currentUser.id }
     })
     .catch(() => {
-      throw errors.databaseError();
+      throw errors.databaseError('Cannot find any album of this user');
     });
 
   if (boughtAlbum) {
@@ -59,7 +59,7 @@ exports.buyAlbum = async (albumId, currentUser) => {
   }
 
   await currentUser.addAlbum(album).catch(() => {
-    throw errors.databaseError();
+    throw errors.databaseError('Cannot add this album to current user');
   });
 
   return album;

@@ -139,30 +139,27 @@ describe('usersController.buyAlbum', () => {
       title: 'non esse culpa molestiae omnis sed optio'
     }
   };
+  beforeEach(() => axios.get.mockImplementation(() => Promise.resolve(data)));
 
   it('Buys one album', async () => {
-    axios.get.mockImplementationOnce(() => Promise.resolve(data));
     const token = await createAndSignInUser();
     const response = await request.post('/albums/4').set('token', token);
-
     const ua = await models.userAlbums.findOne({ where: { albumId: response.body.album.id } });
+
     expect(ua.dataValues.albumId).toBe(response.body.album.id);
   });
 
   it('Tries to buy the same album and fails', async () => {
     const token = await createAndSignInUser();
-
-    axios.get.mockImplementation(() => Promise.resolve(data));
     await request.post('/albums/4').set('token', token);
-
     const response = await request.post('/albums/4').set('token', token);
 
     expect(response.body.internal_code).toBe('album_already_purchased');
   });
 
   it('Tries to buy an album without login and fails', async () => {
-    axios.get.mockImplementationOnce(() => Promise.resolve(data));
     const response = await request.post('/albums/4').set('token', 'no-valid-token');
+
     expect(response.body.internal_code).toBe('invalid_token');
   });
 });
