@@ -2,6 +2,7 @@ const logger = require('../logger');
 const usersService = require('../services/users');
 const albumsService = require('../services/album');
 const credentialsHelper = require('../services/validateCredentials');
+const albumsSerializers = require('../serializers/albums');
 
 module.exports.signUp = (req, res, next) =>
   usersService
@@ -48,4 +49,13 @@ module.exports.signIn = (req, res, next) => {
       res.status(200).send({ response: token });
     })
     .catch(next);
+};
+
+module.exports.listAlbums = async (req, res, next) => {
+  try {
+    const albumsArray = await albumsService.listAlbums(req.params.userId);
+    return res.status(200).send({ userAlbums: albumsSerializers.albums(albumsArray) });
+  } catch (error) {
+    return next(error);
+  }
 };

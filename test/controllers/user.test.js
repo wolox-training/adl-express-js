@@ -6,6 +6,12 @@ const axios = require('axios');
 const models = require('../../app/models/index');
 const app = require('../../app');
 const { factoryAllModels } = require('../factory/factory_by_models');
+const config = require('../../config');
+const constants = require('../../lib/constants');
+
+const SECRET_KEY = config.common.api.secretKey;
+
+jest.mock('axios');
 
 jest.mock('axios');
 
@@ -161,5 +167,42 @@ describe('usersController.buyAlbum', () => {
     const response = await request.post('/albums/4').set('token', 'no-valid-token');
 
     expect(response.body.internal_code).toBe('invalid_token');
+  });
+});
+
+describe('usersController.listAlbums', () => {
+  it('Returns its all albums', async () => {
+    const albums = await factory.createMany('album', 3);
+    const token = await createAndSignInUser();
+    const currentUser = await models.user.findOne({
+      where: { email: jwt.decode(token, SECRET_KEY) }
+    });
+    await currentUser.addAlbums(albums);
+    const response = await request.get(`/users/${currentUser.id}/albums`).set('token', token);
+
+    expect(response.body.userAlbums.albums.length).toBe(3);
+  });
+
+  it('Tries to get albums of another user and fails', async () => {
+    const albums = await factory.createMany('album', 3);
+    const token = await createAndSignInUser();
+    const owner = await createUser('Dante', 'Farias', 'dante.farias@wolox.com', 'password1923');
+    await owner.addAlbums(albums);
+    const response = await request.get(`/users/${owner.id}/albums`).set('token', token);
+    expect(response.body.internal_code).toBe('invalid_credentials');
+  });
+
+  it('Tries to get albums of another user being admin and success', async () => {
+    const albums = await factory.createMany('album', 3);
+    const token = await createAndSignInUser();
+    const owner = await createUser('Dante', 'Farias', 'dante.farias@wolox.com', 'password1923');
+    await owner.addAlbums(albums);
+    const currentUser = await models.user.findOne({
+      where: { email: jwt.decode(token, SECRET_KEY) }
+    });
+    await currentUser.update({ type: constants.user_types.ADMIN });
+    const response = await request.get(`/users/${owner.id}/albums`).set('token', token);
+
+    expect(response.body.userAlbums.albums.length).toBe(3);
   });
 });

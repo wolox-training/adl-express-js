@@ -64,3 +64,23 @@ exports.buyAlbum = async (albumId, currentUser) => {
 
   return album;
 };
+
+exports.listAlbums = async userId => {
+  try {
+    const userAlbums = await models.album.findAll({
+      include: [
+        {
+          model: models.user,
+          attributes: ['id'],
+          through: { where: { id: userId } },
+          as: 'users'
+        }
+      ]
+    });
+
+    return userAlbums;
+  } catch (error) {
+    logger.error(`An error occurs in database: ${JSON.stringify(error)}`);
+    throw errors.databaseError(error);
+  }
+};
