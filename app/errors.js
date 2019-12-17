@@ -26,3 +26,6 @@ exports.invalidCredentials = message => internalError(message, exports.INVALID_C
 
 exports.INVALID_TOKEN = 'invalid_token';
 exports.invalidToken = message => internalError(message, exports.INVALID_TOKEN);
+
+exports.ALBUM_PURCHASED = 'album_already_purchased';
+exports.albumPurchased = message => internalError(message, exports.ALBUM_PURCHASED);

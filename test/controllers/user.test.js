@@ -2,9 +2,12 @@ const supertest = require('supertest');
 const jwt = require('jwt-simple');
 const { factory } = require('factory-girl');
 const bcrypt = require('bcrypt');
+const axios = require('axios');
 const models = require('../../app/models/index');
 const app = require('../../app');
 const { factoryAllModels } = require('../factory/factory_by_models');
+
+jest.mock('axios');
 
 factoryAllModels();
 
@@ -16,8 +19,8 @@ const userAttributes = (firstName, lastName, email, password) => ({
   password
 });
 
-const createUser = (firstName, lastName, email, password) =>
-  factory.create('user', userAttributes(firstName, lastName, email, bcrypt.hashSync(password, 10)));
+const createUser = (first_name, last_name, email, password) =>
+  factory.create('user', userAttributes(first_name, last_name, email, bcrypt.hashSync(password, 10)));
 
 const createAndSignInUser = () =>
   createUser('Omar', 'Rodriguez', 'omar.rodriguez@wolox.com', 'password1923').then(() =>
@@ -126,4 +129,37 @@ describe('usersController.users', () => {
           expect(response.body.internal_code).toBe('invalid_token');
         })
     ));
+});
+
+describe('usersController.buyAlbum', () => {
+  const data = {
+    data: {
+      userId: 1,
+      id: 4,
+      title: 'non esse culpa molestiae omnis sed optio'
+    }
+  };
+  beforeEach(() => axios.get.mockImplementation(() => Promise.resolve(data)));
+
+  it('Buys one album', async () => {
+    const token = await createAndSignInUser();
+    const response = await request.post('/albums/4').set('token', token);
+    const ua = await models.userAlbums.findOne({ where: { albumId: response.body.album.id } });
+
+    expect(ua.dataValues.albumId).toBe(response.body.album.id);
+  });
+
+  it('Tries to buy the same album and fails', async () => {
+    const token = await createAndSignInUser();
+    await request.post('/albums/4').set('token', token);
+    const response = await request.post('/albums/4').set('token', token);
+
+    expect(response.body.internal_code).toBe('album_already_purchased');
+  });
+
+  it('Tries to buy an album without login and fails', async () => {
+    const response = await request.post('/albums/4').set('token', 'no-valid-token');
+
+    expect(response.body.internal_code).toBe('invalid_token');
+  });
 });

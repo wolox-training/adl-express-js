@@ -26,7 +26,8 @@ const decode = token => {
 
 module.exports.validate = (req, res, next) => {
   try {
-    decode(req.headers.token);
+    const user = decode(req.headers.token);
+    req.currentUser = user;
   } catch (e) {
     throw errors.invalidToken();
   }

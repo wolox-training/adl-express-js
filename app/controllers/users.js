@@ -1,5 +1,6 @@
 const logger = require('../logger');
 const usersService = require('../services/users');
+const albumsService = require('../services/album');
 const credentialsHelper = require('../services/validateCredentials');
 
 module.exports.signUp = (req, res, next) =>
@@ -28,7 +29,18 @@ module.exports.index = (req, res, next) =>
     })
     .catch(next);
 
-module.exports.signIn = (req, res, next) =>
+module.exports.buyAlbum = async (req, res, next) => {
+  try {
+    const currentUser = await req.currentUser;
+    const response = await albumsService.buyAlbum(req.params.id, currentUser);
+    logger.info(`Album purchased: ${JSON.stringify(response.dataValues.title)}`);
+    return res.status(200).send({ album: response.dataValues });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+module.exports.signIn = (req, res, next) => {
   credentialsHelper
     .signIn(req.body)
     .then(token => {
@@ -36,3 +48,4 @@ module.exports.signIn = (req, res, next) =>
       res.status(200).send({ response: token });
     })
     .catch(next);
+};

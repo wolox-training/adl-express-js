@@ -23,6 +23,7 @@
     "migrations": "sequelize db:migrate",
     "migrations:rollback": "sequelize db:migrate:undo",
     "migrations-test": "NODE_ENV=testing npm run migrations",
+    "migrations-test:rollback": "NODE_ENV=testing sequelize db:migrate:undo",
     "start": "node server.js"
   },
   "cacheDirectories": [
