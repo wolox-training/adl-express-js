@@ -7,36 +7,35 @@ const logger = require('../logger');
 
 const SECRET_KEY = config.common.api.secretKey;
 
-const decode = token => {
+const decodeToken = async token => {
   try {
-    const result = jwt.decode(token, SECRET_KEY);
-    return models.user
-      .findOne({
-        where: { email: result.email }
-      })
-      .then(user => {
-        if (!user) {
-          throw errors.invalidToken();
-        }
-
-        return models.session.findOne({ where: { userId: user.id } }).then(session => {
-          if (!session || session.id !== result.token) {
-            throw errors.invalidToken();
-          }
-          return user;
-        });
-      })
-      .catch(() => {
-        throw errors.invalidToken();
-      });
-  } catch (e) {
+    const result = await jwt.decode(token, SECRET_KEY);
+    return result;
+  } catch (error) {
     throw errors.invalidToken();
   }
 };
 
+const decode = async decodeResult => {
+  const user = await models.user.findOne({ where: { email: decodeResult.email } }).catch(() => {
+    throw errors.databaseError();
+  });
+  if (!user) {
+    throw errors.invalidToken();
+  }
+  const session = await models.session.findOne({ where: { userId: user.id } }).catch(() => {
+    throw errors.databaseError();
+  });
+  if (!session || session.id !== decodeResult.token) {
+    throw errors.invalidToken();
+  }
+  return user;
+};
+
 module.exports.validate = async (req, res, next) => {
   try {
-    const user = await decode(req.headers.token);
+    const decodedToken = await decodeToken(req.headers.token);
+    const user = await decode(decodedToken);
     req.currentUser = user;
     return next();
   } catch (error) {
@@ -45,14 +44,17 @@ module.exports.validate = async (req, res, next) => {
   }
 };
 
-module.exports.validateAdmin = (req, res, next) =>
-  decode(req.headers.token)
-    .then(user => {
-      if (user.type !== constants.user_types.ADMIN) {
-        throw errors.invalidCredentials();
-      }
-      return next();
-    })
-    .catch(error => {
-      next(error);
-    });
+module.exports.validateAdmin = async (req, res, next) => {
+  try {
+    const decodedToken = await decodeToken(req.headers.token);
+    const user = await decode(decodedToken);
+    if (user.type !== constants.user_types.ADMIN) {
+      throw errors.invalidCredentials();
+    }
+    req.currentUser = user;
+    return next();
+  } catch (error) {
+    logger.error(`An error occurs: ${JSON.stringify(error)}`);
+    return next(error);
+  }
+};
