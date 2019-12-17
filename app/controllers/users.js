@@ -36,10 +36,20 @@ module.exports.buyAlbum = async (req, res, next) => {
     const currentUser = await req.currentUser;
     const response = await albumsService.buyAlbum(req.params.id, currentUser);
     logger.info(`Album purchased: ${JSON.stringify(response.dataValues.title)}`);
-    return res.status(201).send({ album: response.dataValues });
+    return res.status(200).send({ album: response.dataValues });
   } catch (error) {
     return next(error);
   }
+};
+
+module.exports.signIn = (req, res, next) => {
+  credentialsHelper
+    .signIn(req.body)
+    .then(token => {
+      logger.info(`Sign in with user: ${JSON.stringify(req.body.email)}`);
+      res.status(200).send({ response: token });
+    })
+    .catch(next);
 };
 
 module.exports.listAlbums = async (req, res, next) => {

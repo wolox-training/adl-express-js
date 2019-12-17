@@ -46,8 +46,8 @@ module.exports.validate = async (req, res, next) => {
 
 module.exports.validateAdmin = async (req, res, next) => {
   try {
-    const decodedToken = await decodeToken(req.headers.token);
-    const user = await validateAuthentication(decodedToken);
+    const decodeResult = await decodeToken(req.headers.token);
+    const user = await validateAuthentication(decodeResult);
     if (user.type !== constants.user_types.ADMIN) {
       throw errors.invalidCredentials();
     }
