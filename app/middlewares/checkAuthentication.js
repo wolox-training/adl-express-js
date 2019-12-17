@@ -16,7 +16,7 @@ const decodeToken = async token => {
   }
 };
 
-const decode = async decodeResult => {
+const validateAuthentication = async decodeResult => {
   const user = await models.user.findOne({ where: { email: decodeResult.email } }).catch(() => {
     throw errors.databaseError();
   });
@@ -34,8 +34,8 @@ const decode = async decodeResult => {
 
 module.exports.validate = async (req, res, next) => {
   try {
-    const decodedToken = await decodeToken(req.headers.token);
-    const user = await decode(decodedToken);
+    const decodeResult = await decodeToken(req.headers.token);
+    const user = await validateAuthentication(decodeResult);
     req.currentUser = user;
     return next();
   } catch (error) {
@@ -47,7 +47,7 @@ module.exports.validate = async (req, res, next) => {
 module.exports.validateAdmin = async (req, res, next) => {
   try {
     const decodedToken = await decodeToken(req.headers.token);
-    const user = await decode(decodedToken);
+    const user = await validateAuthentication(decodedToken);
     if (user.type !== constants.user_types.ADMIN) {
       throw errors.invalidCredentials();
     }
