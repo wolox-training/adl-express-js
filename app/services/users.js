@@ -52,7 +52,7 @@ module.exports.signIn = body =>
         return models.session.create({ userId: user.id }).then(session => {
           const tokenArray = { sessionId: session.id, email: user.email };
           return jwt.encode(tokenArray, process.env.SECRET_KEY).catch(() => {
-            throw errors.databaseError('Could not return token successfully');
+            throw errors.invalidToken('Could not return token successfully');
           });
         });
       });
