@@ -4,6 +4,7 @@ const albumsService = require('../services/album');
 const sessionsService = require('../services/sessions');
 const credentialsHelper = require('../services/validateCredentials');
 const albumsSerializers = require('../serializers/albums');
+const emailSender = require('../helpers/users/sendEmail');
 
 module.exports.signUp = (req, res, next) =>
   usersService
@@ -19,6 +20,7 @@ module.exports.signIn = (req, res, next) =>
     .signIn(req.body)
     .then(response => {
       logger.info(`Sign in with user: ${JSON.stringify(req.body.email)}`);
+      emailSender.send(req.body.email);
       res
         .status(200)
         .send({ response: { token: response.token, expireTime: new Date(response.expireTime) } });
