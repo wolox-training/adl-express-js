@@ -48,7 +48,7 @@ const config = {
       nodeVersion: process.env.NODE_VERSION || 'X-Node-Version'
     },
     nodeMailer: {
-      host: process.env.MAILER_HOST,
+      host: process.env.MAIL_HOST,
       port: process.env.MAILER_PORT,
       auth: {
         user: process.env.MAILER_USER,
