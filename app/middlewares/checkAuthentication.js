@@ -1,4 +1,5 @@
 const jwt = require('jwt-simple');
+const moment = require('moment');
 const errors = require('../errors');
 const models = require('../models/index');
 const constants = require('../../lib/constants');
@@ -20,7 +21,11 @@ const decode = token => {
         }
 
         return models.session.findOne({ where: { userId: user.id } }).then(session => {
-          if (!session || session.id !== result.token || result.expireTime < new Date()) {
+          if (
+            !session ||
+            session.id !== result.token ||
+            result.expireTime < moment().format('MMMM Do YYYY, h:mm:ss a')
+          ) {
             throw errors.invalidToken();
           }
           return user;

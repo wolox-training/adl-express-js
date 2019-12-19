@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jwt-simple');
+const moment = require('moment');
 const models = require('../models/index');
 const errors = require('../errors');
 const config = require('../../config');
@@ -32,8 +33,10 @@ module.exports.signIn = async body => {
   const newSession = await models.session.create({ userId: user.id }).catch(() => {
     throw errors.databaseError('Could not create a new session successfully');
   });
-  const current = new Date();
-  const expireTime = current.setSeconds(current.getSeconds() + parseInt(TOKEN_EXPIRATION));
+  const now = moment().format();
+  const expireTime = moment(now)
+    .add(TOKEN_EXPIRATION, 'seconds')
+    .format('MMMM Do YYYY, h:mm:ss a');
   const tokenArray = { token: newSession.id, email: user.email, expireTime };
   try {
     return { token: jwt.encode(tokenArray, process.env.SECRET_KEY), expireTime };
