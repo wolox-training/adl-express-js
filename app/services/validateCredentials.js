@@ -6,7 +6,6 @@ const errors = require('../errors');
 const config = require('../../config');
 
 const TOKEN_EXPIRATION = config.common.api.tokenExpiration;
-
 module.exports.signIn = async body => {
   const user = await models.user
     .findOne({
@@ -19,7 +18,6 @@ module.exports.signIn = async body => {
   if (!user || !bcrypt.compareSync(body.password, user.password)) {
     throw errors.invalidCredentials('Invalid credentials, please try again');
   }
-
   const previousToken = await models.session.findOne({ where: { userId: user.id } }).catch(() => {
     throw errors.databaseError('Could not find a session for this user');
   });

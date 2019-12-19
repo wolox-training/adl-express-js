@@ -44,6 +44,16 @@ module.exports.buyAlbum = async (req, res, next) => {
   }
 };
 
+module.exports.signIn = (req, res, next) => {
+  credentialsHelper
+    .signIn(req.body)
+    .then(token => {
+      logger.info(`Sign in with user: ${JSON.stringify(req.body.email)}`);
+      res.status(200).send({ response: token });
+    })
+    .catch(next);
+};
+
 module.exports.listAlbums = async (req, res, next) => {
   try {
     const albumsArray = await albumsService.listAlbums(req.params.userId);
