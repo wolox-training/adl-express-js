@@ -4,6 +4,7 @@ const sleep = require('util').promisify(setTimeout);
 const { factory } = require('factory-girl');
 const bcrypt = require('bcrypt');
 const axios = require('axios');
+const nodemailer = require('nodemailer');
 const models = require('../../app/models/index');
 const app = require('../../app');
 const { factoryAllModels } = require('../factory/factory_by_models');
@@ -13,6 +14,15 @@ const constants = require('../../lib/constants');
 const SECRET_KEY = config.common.api.secretKey;
 
 jest.mock('axios');
+jest.mock('nodemailer');
+
+const options = {
+  from: 'from@email.com',
+  to: 'to@email.com',
+  text: 'My Message!'
+};
+
+nodemailer.createTransport.sendMail(options);
 
 factoryAllModels();
 
@@ -23,6 +33,8 @@ const userAttributes = (firstName, lastName, email, password) => ({
   email,
   password
 });
+
+// beforeEach(() => nodemailer.createTransport.sendMail().mockImplementation(() => Promise.resolve('data')));
 
 const createUser = (first_name, last_name, email, password) =>
   factory.create('user', userAttributes(first_name, last_name, email, bcrypt.hashSync(password, 10)));
