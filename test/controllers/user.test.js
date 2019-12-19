@@ -181,6 +181,7 @@ describe('usersController.listAlbums', () => {
     });
     await currentUser.addAlbums(albums);
     const response = await request.get(`/users/${currentUser.id}/albums`).set('token', token);
+
     expect(response.body.userAlbums.albums.length).toBe(3);
   });
 
