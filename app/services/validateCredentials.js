@@ -37,7 +37,7 @@ module.exports.signIn = async body => {
   const expireTime = moment(now)
     .add(TOKEN_EXPIRATION, 'seconds')
     .format('MMMM Do YYYY, h:mm:ss a');
-  const tokenArray = { token: newSession.id, email: user.email, expireTime };
+  const tokenArray = { session_id: newSession.id, email: user.email, expireTime };
   try {
     return { token: jwt.encode(tokenArray, process.env.SECRET_KEY), expireTime };
   } catch (error) {

@@ -23,7 +23,7 @@ const decode = token => {
         return models.session.findOne({ where: { userId: user.id } }).then(session => {
           if (
             !session ||
-            session.id !== result.token ||
+            session.id !== result.session_id ||
             result.expireTime < moment().format('MMMM Do YYYY, h:mm:ss a')
           ) {
             throw errors.invalidToken();
