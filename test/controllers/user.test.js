@@ -13,8 +13,6 @@ const SECRET_KEY = config.common.api.secretKey;
 
 jest.mock('axios');
 
-jest.mock('axios');
-
 factoryAllModels();
 
 const request = supertest(app);
@@ -91,7 +89,7 @@ describe('usersController.createUserSignIn', () => {
       .post('/users/sessions')
       .send({ email: 'omar.rodriguez@wolox.com', password: 'password1923' })
       .then(response => {
-        expect(jwt.decode(response.body.response, process.env.SECRET_KEY)).toBe('omar.rodriguez@wolox.com');
+        expect(jwt.decode(response.body.response, SECRET_KEY).email).toBe('omar.rodriguez@wolox.com');
       }));
 
   it('Tries to log in with correct email but invalid password and fails ', () =>
@@ -175,7 +173,7 @@ describe('usersController.listAlbums', () => {
     const albums = await factory.createMany('album', 3);
     const token = await createAndSignInUser();
     const currentUser = await models.user.findOne({
-      where: { email: jwt.decode(token, SECRET_KEY) }
+      where: { email: jwt.decode(token, SECRET_KEY).email }
     });
     await currentUser.addAlbums(albums);
     const response = await request.get(`/users/${currentUser.id}/albums`).set('token', token);
@@ -198,11 +196,24 @@ describe('usersController.listAlbums', () => {
     const owner = await createUser('Dante', 'Farias', 'dante.farias@wolox.com', 'password1923');
     await owner.addAlbums(albums);
     const currentUser = await models.user.findOne({
-      where: { email: jwt.decode(token, SECRET_KEY) }
+      where: { email: jwt.decode(token, SECRET_KEY).email }
     });
     await currentUser.update({ type: constants.user_types.ADMIN });
     const response = await request.get(`/users/${owner.id}/albums`).set('token', token);
 
     expect(response.body.userAlbums.albums.length).toBe(3);
+  });
+});
+
+describe('usersController.invalidate', () => {
+  it("Invalidates all user's sessions and fails when tries to get some protected resource", async () => {
+    const token = await createAndSignInUser();
+    const currentUser = await models.user.findOne({
+      where: { email: jwt.decode(token, SECRET_KEY).email }
+    });
+    await request.post('/users/sessions/invalidate').set('token', token);
+    const response = await request.get(`/users/${currentUser.id}/albums`).set('token', token);
+
+    expect(response.body.internal_code).toBe('invalid_token');
   });
 });

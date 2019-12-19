@@ -30,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'userId',
       otherKey: 'albumId'
     });
+    User.hasOne(models.session);
   };
 
   return User;

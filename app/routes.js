@@ -22,12 +22,12 @@ exports.init = app => {
     [authenticationMiddleware.validateAdmin, credentialsMiddleware.validate],
     adminController.signUp
   );
-
   app.get('/users', [authenticationMiddleware.validate], usersController.index);
   app.get(
     '/users/:userId/albums',
     [authenticationMiddleware.validate, authorizationMiddleware.ownerAdmin],
     usersController.listAlbums
   );
+  app.post('/users/sessions/invalidate', [authenticationMiddleware.validate], usersController.invalidate);
   app.post('/albums/:id', [authenticationMiddleware.validate], usersController.buyAlbum);
 };

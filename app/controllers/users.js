@@ -1,6 +1,7 @@
 const logger = require('../logger');
 const usersService = require('../services/users');
 const albumsService = require('../services/album');
+const sessionsService = require('../services/sessions');
 const credentialsHelper = require('../services/validateCredentials');
 const albumsSerializers = require('../serializers/albums');
 
@@ -55,6 +56,16 @@ module.exports.listAlbums = async (req, res, next) => {
   try {
     const albumsArray = await albumsService.listAlbums(req.params.userId);
     return res.status(200).send({ userAlbums: albumsSerializers.albums(albumsArray) });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+module.exports.invalidate = async (req, res, next) => {
+  try {
+    const currentUser = await req.currentUser;
+    await sessionsService.invalidate(currentUser);
+    return res.status(200).send({ response: 'deleted_session' });
   } catch (error) {
     return next(error);
   }
