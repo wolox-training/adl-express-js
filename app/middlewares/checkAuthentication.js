@@ -29,8 +29,8 @@ const validateAuthentication = async decodeResult => {
   });
   if (
     !session ||
-    session.id !== decodeResult.session_id ||
-    decodeResult.expireTime < moment().format('MMMM Do YYYY, h:mm:ss a')
+    session.id !== decodeResult.sessionId ||
+    decodeResult.expireTime < moment().format(config.common.api.dateFormat)
   ) {
     throw errors.invalidToken();
   }

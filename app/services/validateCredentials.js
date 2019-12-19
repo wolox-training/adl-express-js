@@ -6,6 +6,8 @@ const errors = require('../errors');
 const config = require('../../config');
 
 const TOKEN_EXPIRATION = config.common.api.tokenExpiration;
+const TOKEN_EXPIRATION_UNIT = config.common.api.tokenExpirationUnit;
+
 module.exports.signIn = async body => {
   const user = await models.user
     .findOne({
@@ -33,9 +35,9 @@ module.exports.signIn = async body => {
   });
   const now = moment().format();
   const expireTime = moment(now)
-    .add(TOKEN_EXPIRATION, 'seconds')
-    .format('MMMM Do YYYY, h:mm:ss a');
-  const tokenArray = { session_id: newSession.id, email: user.email, expireTime };
+    .add(TOKEN_EXPIRATION, TOKEN_EXPIRATION_UNIT)
+    .format(config.common.api.dateFormat);
+  const tokenArray = { sessionId: newSession.id, email: user.email, expireTime };
   try {
     return { token: jwt.encode(tokenArray, process.env.SECRET_KEY), expireTime };
   } catch (error) {
