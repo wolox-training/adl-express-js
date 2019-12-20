@@ -1,5 +1,6 @@
 const supertest = require('supertest');
 const jwt = require('jwt-simple');
+const sleep = require('util').promisify(setTimeout);
 const { factory } = require('factory-girl');
 const bcrypt = require('bcrypt');
 const axios = require('axios');
@@ -89,7 +90,7 @@ describe('usersController.createUserSignIn', () => {
       .post('/users/sessions')
       .send({ email: 'omar.rodriguez@wolox.com', password: 'password1923' })
       .then(response => {
-        expect(jwt.decode(response.body.response, SECRET_KEY).email).toBe('omar.rodriguez@wolox.com');
+        expect(jwt.decode(response.body.response.token, SECRET_KEY).email).toBe('omar.rodriguez@wolox.com');
       }));
 
   it('Tries to log in with correct email but invalid password and fails ', () =>
@@ -112,10 +113,10 @@ describe('usersController.createUserSignIn', () => {
 describe('usersController.users', () => {
   it('List users', () =>
     factory.createMany('user', 5).then(() =>
-      createAndSignInUser().then(token =>
+      createAndSignInUser().then(signInResponse =>
         request
           .get('/users?page=0')
-          .set('token', token)
+          .set('token', signInResponse.token)
           .send({})
           .then(response => {
             expect(response.body.response.count).toBe(6);
@@ -146,7 +147,8 @@ describe('usersController.buyAlbum', () => {
   beforeEach(() => axios.get.mockImplementation(() => Promise.resolve(data)));
 
   it('Buys one album', async () => {
-    const token = await createAndSignInUser();
+    const signInResponse = await createAndSignInUser();
+    const { token } = signInResponse;
     const response = await request.post('/albums/4').set('token', token);
     const ua = await models.userAlbums.findOne({ where: { albumId: response.body.album.id } });
 
@@ -154,7 +156,8 @@ describe('usersController.buyAlbum', () => {
   });
 
   it('Tries to buy the same album and fails', async () => {
-    const token = await createAndSignInUser();
+    const signInResponse = await createAndSignInUser();
+    const { token } = signInResponse;
     await request.post('/albums/4').set('token', token);
     const response = await request.post('/albums/4').set('token', token);
 
@@ -171,7 +174,8 @@ describe('usersController.buyAlbum', () => {
 describe('usersController.listAlbums', () => {
   it('Returns its all albums', async () => {
     const albums = await factory.createMany('album', 3);
-    const token = await createAndSignInUser();
+    const signInResponse = await createAndSignInUser();
+    const { token } = signInResponse;
     const currentUser = await models.user.findOne({
       where: { email: jwt.decode(token, SECRET_KEY).email }
     });
@@ -183,7 +187,8 @@ describe('usersController.listAlbums', () => {
 
   it('Tries to get albums of another user and fails', async () => {
     const albums = await factory.createMany('album', 3);
-    const token = await createAndSignInUser();
+    const signInResponse = await createAndSignInUser();
+    const { token } = signInResponse;
     const owner = await createUser('Dante', 'Farias', 'dante.farias@wolox.com', 'password1923');
     await owner.addAlbums(albums);
     const response = await request.get(`/users/${owner.id}/albums`).set('token', token);
@@ -192,7 +197,8 @@ describe('usersController.listAlbums', () => {
 
   it('Tries to get albums of another user being admin and success', async () => {
     const albums = await factory.createMany('album', 3);
-    const token = await createAndSignInUser();
+    const signInResponse = await createAndSignInUser();
+    const { token } = signInResponse;
     const owner = await createUser('Dante', 'Farias', 'dante.farias@wolox.com', 'password1923');
     await owner.addAlbums(albums);
     const currentUser = await models.user.findOne({
@@ -203,11 +209,28 @@ describe('usersController.listAlbums', () => {
 
     expect(response.body.userAlbums.albums.length).toBe(3);
   });
+
+  it('Tries to get albums with a expired token and fails', async () => {
+    const albums = await factory.createMany('album', 3);
+    const signInResponse = await createAndSignInUser();
+    const { token } = signInResponse;
+    const owner = await createUser('Dante', 'Farias', 'dante.farias@wolox.com', 'password1923');
+    await owner.addAlbums(albums);
+    const currentUser = await models.user.findOne({
+      where: { email: jwt.decode(token, SECRET_KEY).email }
+    });
+    await currentUser.update({ type: constants.user_types.ADMIN });
+    await sleep(4000);
+    const response = await request.get(`/users/${owner.id}/albums`).set('token', token);
+
+    expect(response.body.internal_code).toBe('invalid_token');
+  });
 });
 
 describe('usersController.invalidate', () => {
   it("Invalidates all user's sessions and fails when tries to get some protected resource", async () => {
-    const token = await createAndSignInUser();
+    const signInResponse = await createAndSignInUser();
+    const { token } = signInResponse;
     const currentUser = await models.user.findOne({
       where: { email: jwt.decode(token, SECRET_KEY).email }
     });

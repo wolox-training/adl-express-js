@@ -1,7 +1,12 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jwt-simple');
+const moment = require('moment');
 const models = require('../models/index');
 const errors = require('../errors');
+const config = require('../../config');
+
+const TOKEN_EXPIRATION = config.common.api.tokenExpiration;
+const TOKEN_EXPIRATION_UNIT = config.common.api.tokenExpirationUnit;
 
 module.exports.signIn = async body => {
   const user = await models.user
@@ -15,7 +20,6 @@ module.exports.signIn = async body => {
   if (!user || !bcrypt.compareSync(body.password, user.password)) {
     throw errors.invalidCredentials('Invalid credentials, please try again');
   }
-
   const previousToken = await models.session.findOne({ where: { userId: user.id } }).catch(() => {
     throw errors.databaseError('Could not find a session for this user');
   });
@@ -29,10 +33,12 @@ module.exports.signIn = async body => {
   const newSession = await models.session.create({ userId: user.id }).catch(() => {
     throw errors.databaseError('Could not create a new session successfully');
   });
-
-  const tokenArray = { token: newSession.id, email: user.email };
+  const expireTime = moment()
+    .add(TOKEN_EXPIRATION, TOKEN_EXPIRATION_UNIT)
+    .format(config.common.api.dateFormat);
+  const tokenArray = { sessionId: newSession.id, email: user.email, expireTime };
   try {
-    return jwt.encode(tokenArray, process.env.SECRET_KEY);
+    return { token: jwt.encode(tokenArray, process.env.SECRET_KEY), expireTime };
   } catch (error) {
     throw errors.invalidCredentials('Could not return token succesfully');
   }

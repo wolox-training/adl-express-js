@@ -35,7 +35,10 @@ const config = {
       parameterLimit: process.env.API_PARAMETER_LIMIT,
       port: process.env.PORT,
       numberOfRecords: process.env.NUMBER_OF_RECORDS,
-      secretKey: process.env.SECRET_KEY
+      tokenExpiration: process.env.TIME_OF_EXPIRATION,
+      secretKey: process.env.SECRET_KEY,
+      dateFormat: 'MMMM Do YYYY, h:mm:ss a',
+      tokenExpirationUnit: process.env.TIME_OF_EXPIRATION_UNIT
     },
     session: {
       header_name: 'authorization',

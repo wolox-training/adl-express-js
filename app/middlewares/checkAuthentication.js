@@ -1,4 +1,5 @@
 const jwt = require('jwt-simple');
+const moment = require('moment');
 const errors = require('../errors');
 const models = require('../models/index');
 const constants = require('../../lib/constants');
@@ -26,7 +27,11 @@ const validateAuthentication = async decodeResult => {
   const session = await models.session.findOne({ where: { userId: user.id } }).catch(() => {
     throw errors.databaseError();
   });
-  if (!session || session.id !== decodeResult.token) {
+  if (
+    !session ||
+    session.id !== decodeResult.sessionId ||
+    decodeResult.expireTime < moment().format(config.common.api.dateFormat)
+  ) {
     throw errors.invalidToken();
   }
   return user;
